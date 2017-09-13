@@ -9,13 +9,16 @@
 ## Prerequisite Checks
 
 * Install [node/npm](https://nodejs.org/en/download/) - get latest recommended version
+* Install [React Developer Tools](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi) extension
+* Clone the samples repository for easy access to workshop materials
 
 <hr />
 
 ## Part 1: Introducing React
 
+<!-- Whiteboard Stuff -->
+
 * What is React?
-* JSX
 * Anatomy of a React application
     * Components
     * Props - read-only; the static pieces
@@ -24,9 +27,13 @@
 
 <hr />
 
-## Part 2: Our First React Project (Setup)
+## Part 2: My First React Project (Overview & Setup)
 
-The initial setup for a React application can be a bit tedious but it's important to see how the various packages work together to make our application work. There are some tools such as ```create-react-app``` to automate some of this but since it's only necessary once per project we'll take the time to walk through the process today.
+Throughout the workshop we'll gradually build out an application that allows us to interact with some data from [An API of Ice and Fire](https://anapioficeandfire.com/). The application will be a great foundation for continuing study as it will be loaded with examples of how to accomplish a variety of tasks with React and Redux.
+
+*Demo: The finished app*
+
+The initial setup for a React application can be a bit tedious but it's important to see how the various packages interact to make our application work. There are some tools such as ```create-react-app``` to automate some of this but since it's only necessary once per project we'll take the time to walk through the process today.
 
 ### Initialize a repository
 
@@ -63,7 +70,7 @@ These packages provide all of React's core functionality and the entry point for
 Although it's possible to write a React application with "vanilla" JavaScript it's far more convenient (and productive!) to use React's JSX extension which allows us to specify components with a markdown-like syntax. In order to achieve this we'll need a transpiler that knows how to convert JSX to JavaScript. That's where Babel comes in.
 
 ```bash
-npm install babel-core babel-loader babel-preset-env babel-preset-react babel-preset-stage-2 css-loader  --save
+npm install babel-core babel-loader babel-preset-env babel-preset-es2015 babel-preset-react babel-preset-stage-2 css-loader  --save
 ```
 
 Here we've installed several packages that include the core Babel functionality along with some extensions to handle ES6 and JSX.
@@ -125,6 +132,97 @@ npm start
 
 This will compile the code and start the ```webpack-dev-server```. It will also open your default browser and navigate to the new page.
 
+Congratulations! Your app is now configured!
+
+<hr />
+
+## Part 3: My First React Project: Hello World
+
+In the last section we built created our workspace and imported all the necessary components to build a simple React application but we haven't actually started using React yet since all we're serving up is some HTML.
+
+In this section we'll begin building out the  application we previewed at the beginning of the last section.
+
+### Defining a Component, the Functional Way
+
+In keeping with software development tradition let's begin our introduction to React with a simple "Hello World" component. For convenience we'll define this first component directly within the ```/dev/index.jsx``` file.
+
+```javascript
+function HelloWorld () {
+    return (
+        <div>Hello world!</div>
+    )
+}
+```
+
+The above snippet defines a very simple component called ```HelloWorld```. Let's take a moment to examine the code before we begin using it.
+
+Of particular importance here is how this appears to be a blend of JavaScript and HTML. This is JSX - a declarative extension to JavaScript that lets us write logic in JavaScript while expressing the resulting element(s) in their natural form.
+
+It's important to note, however, that the ```HelloWorld``` fuction does not return HTML but instead returns a specialized React object; the JSX syntax is syntactic sugar over much more verbose JavaScript function calls.
+
+*Since you'll almost never use the long-form we won't cover it here.*
+
+Another important item of note is that all React components must return one of the following:
+
+* A single root element (such as ```div```)
+* A single value
+* ```null```
+
+This restriction exists because again, we're just building JavaScript objects.
+
+Now that we have our component and understand a bit of what's going on, let's see how to start using it within our application.
+
+### Using the HelloWorld Component
+
+To use the ```HelloWorld``` component within the application we need to tell our page about it. Because we're working within the ```index.jsx``` file for the time being, all we need to do is tell React to put it on the page. This is where the ```ReactDOM.render``` function comes into play.
+
+Below the ```HelloWorld``` definition enter the following:
+
+```javascript
+ReactDOM.render(
+    <HelloWorld />,
+    document.querySelector("#container")
+);
+```
+
+```ReactDOM.render``` accepts two arguments:
+1. The component to render
+2. A reference to the element where the component will be rendered.
+
+Now save the file and observe the change within your browser window. Provided that the ```react-hot-loader``` package is installed and configured correctly within webpack you should see this change reflected automatically.
+
+Notice how we represented the ```HelloWorld``` as a JSX element rather than invoking the function. Babel knows to look for a function that matches the element name. It also knows how to pass additional information to that function so it can be used within the component.
+
+Speaking of which...
+
+### Hello Props
+
+```props``` are one of the mechanisms we can use to pass data down to a component. They typically represent specific display elements or other things that affect formatting.
+
+Let's add some props to change the text that the ```HelloWorld``` component renders.
+
+First we'll need to modify the ```HelloWorld``` function as follows:
+
+```javascript
+function HelloWorld (props) {
+    return (
+        <div>Hello {props.firstName} {props.lastName}!</div>
+    )
+}
+```
+
+Here we've changed ```HelloWorld``` to accept a parameter named ```props```. This name is by convention. ```props``` represents an object that contains all of the data passed down to the component, in this case, the ```firstName``` and ```lastName``` values.
+
+So how do those values get passed to the component? Simple. We add them as attributes to the JSX element!
+
+```javascript
+ReactDOM.render(
+    <HelloWorld firstName="Dave" lastName="Fancher" />,
+    document.querySelector("#container")
+);
+```
+
+With the above modifications in place save the file and observe how the component renders the name you supplied.
 <hr />
 
 ## Appendix A: Resources

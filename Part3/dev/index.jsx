@@ -5,13 +5,19 @@ if (process.env.NODE_ENV === "debug") {
     require("./site.scss");
 }
 
+const getUserInfo = (firstName, lastName) =>
+    ({
+        firstName: "Dave",
+        lastName: "Fancher"
+    });
+
 function HelloWorld (props) {
     return (
-        <div>Hello {props.firstName} {props.lastName}!</div>
+        <div>Hello {props.user.firstName} {props.user.lastName}!</div>
     )
 }
 
 ReactDOM.render(
-    <HelloWorld firstName="Dave" lastName="Fancher" />,
+    <HelloWorld user={getUserInfo()} />,
     document.querySelector("#container")
 );

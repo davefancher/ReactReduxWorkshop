@@ -140,7 +140,7 @@ Congratulations! Your app is now configured!
 
 In the last section we built created our workspace and imported all the necessary components to build a simple React application but we haven't actually started using React yet since all we're serving up is some HTML.
 
-In this section we'll begin building out the  application we previewed at the beginning of the last section.
+In this section we'll begin gradually building out the application we previewed at the beginning of the last section.
 
 ### Defining a Component, the Functional Way
 
@@ -154,7 +154,7 @@ function HelloWorld () {
 }
 ```
 
-The above snippet defines a very simple component called ```HelloWorld```. Let's take a moment to examine the code before we begin using it.
+The above snippet defines a very simple functional component called ```HelloWorld```. As you probably guessed, functional components are so named because they're defined as JavaScript functions. Let's take a moment to examine the code before we begin using it.
 
 Of particular importance here is how this appears to be a blend of JavaScript and HTML. This is JSX - a declarative extension to JavaScript that lets us write logic in JavaScript while expressing the resulting element(s) in their natural form.
 
@@ -213,7 +213,7 @@ function HelloWorld (props) {
 
 Here we've changed ```HelloWorld``` to accept a parameter named ```props```. This name is by convention. ```props``` represents an object that contains all of the data passed down to the component, in this case, the ```firstName``` and ```lastName``` values.
 
-So how do those values get passed to the component? Simple. We add them as attributes to the JSX element!
+So how do those values get passed to the component? Simple. We add them as attribute-like arguments to the JSX element!
 
 ```javascript
 ReactDOM.render(
@@ -223,6 +223,202 @@ ReactDOM.render(
 ```
 
 With the above modifications in place save the file and observe how the component renders the name you supplied.
+
+### Hello Props Expressions
+
+Because JSX is more closely related to JavaScript than it is to HTML, we're not restricted to passing only simple values to our components. For example, if we wanted to pass values from an object to a component we could do something like the following:
+
+```javascript
+var me = { firstName: "Dave", lastName: "Fancher" };
+
+ReactDOM.render(
+    <HelloWorld firstName={me.firstName} lastName={me.lastName} />,
+    document.querySelector("#container")
+);
+```
+
+Of particular importance here is the fact that we replaced the quotes in our ```HelloWorld``` definition with curly braces. This tells the compiler that the value for those individual props is the result of an expression - in this case some properties of an object called ```me```. In fact, any valid JavaScript expression can appear within the braces thus allowing for some rather powerful techniques, some of which we'll look at a bit later but to showcase the capability lets extend our example just a bit further.
+
+```javascript
+const getUserInfo = () =>
+    ({
+        firstName: "Dave",
+        lastName: "Fancher"
+    });
+
+function HelloWorld (props) {
+    return (
+        <div>Hello {props.user.firstName} {props.user.lastName}!</div>
+    )
+}
+
+ReactDOM.render(
+    <HelloWorld user={getUserInfo()} />,
+    document.querySelector("#container")
+);
+```
+
+In this final revision we've made several modifications:
+
+1. We added a ```getUserInfo``` function to return some information about a user. You can imagine this function returning some data from a persisted JWT token or other source.
+2. We revised the ```HelloWorld``` component to get the first and last name values from a prop named ```user```
+3. We changed the ```HelloWorld``` element to take a prop named ```user``` from the result of evaluating the ```getUserInfo``` function.
+
+Although the end result will the same as before we've begun the process of building composable React components. Components aren't usually quite as simple as what we've seen in this example though so let's move on to a more complex example.
+
+<hr />
+
+## Part 4: Class Components
+
+In the last section we defined a component as a single JavaScript function but we'll quite frequently not only need our components to manage their data but we may also need more control over the components' lifecycle. That's where component classes come in.
+
+Just like their functional counterparts are based on JavaScript functions, class components are based on JavaScript classes. This approach gives us more control over an individual component's behavior.
+
+From here on, we'll no longer need the ```HelloWorld``` component so you can safely delete it from your ```index.jsx``` file. Don't worry about losing the example of a functional component because we'll be building up several more as we develop the application. (You can also refer back to the ```HelloWorld``` example in the ```Part3``` folder if you'd like to see it again.)
+
+A common task in Web applications is providing a way for users to log in. We're not going to go to the extent of connecting to an actual authentication system but we will fake it by providing a log in form and using local storage to persist that state.
+
+### Defining the Login Form
+
+Since we've moved beyond the basic ```HelloWorld``` example and are starting to get serious about building this application let's start following some standard conventions for project organization. There are several ways to approach this but to keep things fairly simple we'll organize our code according to purpose and feature. Since the login form will be a component that applies to the whole application we'll place it in ```/components/app/loginForm.jsx```. Go ahead and create that folder and file structure.
+
+After creating that structure the first thing we'll need to do is import some types from the React packages. We can do so with the following line (feel free to copy it from index.jsx):
+
+```javascript
+import React, { Component } from "react";
+```
+
+Because we want React to handle placing the login form on the page we don't need to import ```ReactDOM```. We will, however, have to tell ```index.jsx``` about the form but we'll come back to that in due time.
+
+Next we'll create the initial structure for the component (feel free to copy this from the ```Part4``` folder):
+
+```javascript
+export default class LoginForm extends Component {
+    render () {
+        return (
+            <div className="form-inline">
+                <div className="form-group">
+                    <label htmlFor="username">Email address</label>
+                    <input type="text" className="form-control" id="username" placeholder="Email Address" />
+                </div>
+                <div className="form-group">
+                    <label htmlFor="password">Password</label>
+                    <input type="password" className="form-control" id="password" />
+                </div>
+                <button className="btn btn-default">Log in</button>
+            </div>)
+    }
+}
+```
+
+At this point our ```LoginForm``` component is conceptually little more than what we saw with the ```HelloWorld``` functional component but there are some important differences. First, instead of being a function we've defined a class called ```LoginForm``` that extends the base ```Component``` class that React provides. Extending ```Component``` is required for class components.
+
+Our ```LoginForm``` class also currently defines only a ```render``` function which returns the content to render. Here we see another implication of JSX being so closely related to JavaScript in that many of the attributes such as ```className``` and ```htmlFor``` follow the JavaScript naming conventions rather than the HTML conventions.
+
+At this point we've defined enough of the component to add it to the page but in order to do so we must first tell ```index.jsx``` about it. We'll accomplish that by adding an import directive to ```index.jsx```
+
+```javascript
+import LoginForm from "./components/app/loginForm.jsx";
+```
+
+Finally, we can replace our old ```HelloWorld``` element with a new ```LoginForm``` element like this:
+
+```javascript
+ReactDOM.render(
+    <LoginForm />,
+    document.querySelector("#container")
+);
+```
+
+Note that we don't need to make any changes to our underlying ```index.html``` document to handle this new component; we simply tell ```ReactDOM``` to render the ```LoginForm``` within the ```#container``` element.
+
+Now go ahead and save your changes and observe the result in the browser.
+
+So we've defined a typical login form as a React class component but it doesn't do anything yet. We could start writing some code in our ```index.jsx``` to handle the user interaction but that's not really the React way.
+
+One of the advantages that class components offer over functional components for components that require some type of interaction is that they provide some additional mechanisms for controlling the component's behavior. These mechanisms collectively form the *component lifecycle*.
+
+### The Component Lifecycle
+
+The [component lifecycle](https://facebook.github.io/react/docs/react-component.html) consists of three phases:
+
+1. Mounting
+2. Updating
+3. Unmounting
+
+Each of the three phases provides one or more function hooks we can define in our class components to ensure proper behavior.
+
+#### Mounting
+
+Mounting occurs when a component is being created and ultimately added to the DOM. We can tie in to the mounting process at any of four places by defining methods on our component class:
+
+<dl>
+    <dt>Component constructor</dt>
+    <dd>Allows us to initialize the component's state. A component's constructor accepts the initial props object and should always call super(props). We'll discuss more about state in just a bit.</dd>
+    <dt>componentWillMount</dt>
+    <dd>Obsolete. Provides an alternative place to initialize state but the constructor is recommended.</dd>
+    <dt>render</dt>
+    <dd>Required. Returns the content that will be added to the DOM.</dd>
+    <dt>componentDidMount</dt>
+    <dd>Provides a place to write initialization code that requires elements be present in the DOM.</dd>
+</dl>
+
+#### Updating
+
+After the initial rendering, any changes to props or state will trigger an update. Like the mounting phase, updating also provides several places to hook into.
+
+<dl>
+    <dt>componentWillReceiveProps</dt>
+    <dd>Invoked before new prop values are sent to the mounted component.</dd>
+    <dt>shouldComponentUpdate</dt>
+    <dd>Provides an opportunity to compare the current prop and state values with the incoming values and inform React as to whether the component should be re-rendered by returning true or false.</dd>
+    <dt>componentWillUpdate</dt>
+    <dd>Gives us a place to perform any pre-update operations.</dd>
+    <dt>render</dt>
+    <dd>Same as during the mounting phase</dd>
+    <dt>componentDidUpdate</dt>
+    <dd>Gives us an opportunity to work with the newly updated DOM.</dd>
+</dl>
+
+#### Unmounting
+
+The final stage of the component lifecycle is unmounting. This phase occurs as the component is being removed from the DOM. Unlike the other phases, Unmounting provides only a single hook:
+
+<dl>
+    <dd>componentWillUnmount</dd>
+    <dt>Called immediately before the component is destroyed. This is useful for various cleanup operations much like .NET's IDisposable.Dispose method.</dt>
+</dl>
+
+### Managing Login: Setting Initial State
+
+Our ```LoginForm``` doesn't need to utilize most of the hooks into the component lifecycle but it certainly does need to be aware of the current user context so let's begin building out that functionality starting with the constructor.
+
+```javascript
+constructor(props) {
+    super(props);
+    this.state = {
+        validationError: null,
+        userName: null
+    };
+}
+```
+
+This is a pretty typical pattern for a component constructor. The constructor accepts the initial props, passes them up to the superclass (Component), then defines some initial state that's available to the component.
+
+Before we go any further let's take a moment to talk about what state means in React.
+
+### State in React
+
+Until now we've been tossing around the term "state" pretty frequently but we haven't really talked about what it means in a React app. Much like props, React state helps determine how a component will render. Unlike props, though, React state is private to a component but it can be updated in response to events. Furthermore, although state it private to an individual component, it can be passed to child components as props! This is another key aspect of React's compositional nature.
+
+Let's continue building out our ```LoginForm``` component with this in mind. Along the way we'll circle back to this discussion with some special concerns around managing state within a component.
+
+### Managing Login: Logging On
+
+### Debugging: Introducing the React Developer Tools
+
+### Managing Login: Conditional Rendering
+
 <hr />
 
 ## Appendix A: Resources

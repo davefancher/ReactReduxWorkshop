@@ -385,8 +385,8 @@ After the initial rendering, any changes to props or state will trigger an updat
 The final stage of the component lifecycle is unmounting. This phase occurs as the component is being removed from the DOM. Unlike the other phases, Unmounting provides only a single hook:
 
 <dl>
-    <dd>componentWillUnmount</dd>
-    <dt>Called immediately before the component is destroyed. This is useful for various cleanup operations much like .NET's IDisposable.Dispose method.</dt>
+    <dt>componentWillUnmount</dt>
+    <dd>Called immediately before the component is destroyed. This is useful for various cleanup operations much like .NET's IDisposable.Dispose method.</dd>
 </dl>
 
 ### Managing Login: Setting Initial State

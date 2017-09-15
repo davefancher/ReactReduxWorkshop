@@ -398,7 +398,7 @@ constructor(props) {
     super(props);
     this.state = {
         validationError: null,
-        userName: null
+        username: null
     };
 }
 ```
@@ -411,13 +411,106 @@ Before we go any further let's take a moment to talk about what state means in R
 
 Until now we've been tossing around the term "state" pretty frequently but we haven't really talked about what it means in a React app. Much like props, React state helps determine how a component will render. Unlike props, though, React state is private to a component but it can be updated in response to events. Furthermore, although state it private to an individual component, it can be passed to child components as props! This is another key aspect of React's compositional nature.
 
-Let's continue building out our ```LoginForm``` component with this in mind. Along the way we'll circle back to this discussion with some special concerns around managing state within a component.
+Let's continue building out our ```LoginForm``` component with this in mind. Along the way we'll circle back to this discussion with some special concerns around managing a component's state.
 
 ### Managing Login: Logging On
 
+In a typical modern Web application a user would enter their credentials and click the "Log in" button which would trigger some event handler to process the action. The same holds true in a React application and the process for setting up that handler is quite similar.
+
+We'll begin by adding a click handler to the button:
+
+```javascript
+// snip
+<button className="btn btn-default" onClick={this.handleLogin}>Log in</button>
+// snip
+```
+
+Although this may look like the classic approach to hooking up a handler for the click event there is something we should discuss. First, notice how ```this.handleLogin``` is wrapped in curly braces. Recall from our earlier discussion that curly braces indicate that the value is the result of an expression. In this case we're telling React that this button's click handler is the component's ```handleLogin``` function.
+
+Now let's go ahead and define the event handler as a method on the ```LoginForm``` class.
+
+```javascript
+handleLogin(e) {
+    var emailAddress = document.querySelector("#username").value;
+    var password = document.querySelector("#password").value;
+
+    if (emailAddress && password) {
+        localStorage.setItem("username", emailAddress);
+        this.setState({ userName: emailAddress });
+    } else {
+        this.setState({ validationError: "There was a problem logging you in. Please check your credentials and try again." });
+    }
+}
+```
+
+*Although event handlers follow a familiar pattern in React they do behave a bit differently. One important difference is that the event passed to the handler isn't a native browser event but is rather a React supplied type called [SyntheticEvent](https://facebook.github.io/react/docs/events.html) which aims to standardize events across browsers. We won't spend time discussing them much here but should you so desire to learn more you can follow the link above.*
+
+The handleLogin event handler is rather straightforward. It simply reads the username and password values from their respective input fields and ensures that they have been supplied. If we have both we persist the user name to local storage and update the component state to reflect the credentials otherwise we update the component state to reflect an error condition.
+
+Now save your file then jump to the browser, open the developer console, and try it out. Provided that you haven't jumped ahead in these exercises you'll quickly discover that clicking the "Log in" button results in an error stating that we can't read property ```setState``` of ```null```.
+
+Both references to ```setState``` in the handler are against ```this``` implying that the ```setState``` method belongs to our component. Indeed, React's Component class does define a method called ```setState``` so what's going on? 
+
+This comes down to how JavaScript deals with the ```this``` operator. When we bound the function to the click event in the JSX we simply passed the function without any context such as the class reference. There are a few ways to work around this issue including arrow functions but the React team recommends explicitly binding the method to the instance in the constructor like this:
+
+```javascript
+constructor(props) {
+    // snip
+
+    this.handleLogin = this.handleLogin.bind(this);
+}
+```
+
+Now when we save the file our button should behave properly... or at least not display any errors.
+
 ### Debugging: Introducing the React Developer Tools
 
+So far we haven't built in any conditional rendering logic to control how the component *reacts* to changes in its state so to verify that the state is actually changing we can turn to the [React Developer Tools](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi).
+
+The React Developer Tools are a browser extension that lets us inspect the current state of our React application.
+
+Go ahead and open the developer tools if you don't already have them open then click over to the "React" tab.
+
+You should see a few panels. On the left is the document structure complete with component names. On the right is a listing of props and state.
+
+Select the ```LoginForm``` element if it isn't already selected and observe how the state currently reflects the state we defined in ```LoginForm```'s constructor. Now try to log in without entering a user name or password. You should see the ```validationError``` flash yellow and update to reflect our error message. Now try logging in with some combination of credentials.
+
+What happened?
+
+### Managing State
+
+You should have seen the ```username``` flash yellow to highlight the change but notice how the ```validationError``` value is still set from the previous failed login attempt. This illustrates another important concept in React:
+
+> State updates are *merged* into the current state.
+
+This means that when we call ```setState``` the value we pass doesn't replace the current state. It's also the basis for composing more complex components.
+
+Speaking of ```setState```...
+
+Earlier we discussed how state in React represents the changeable portions of a component. This is true but we need to take care how we go about updating that state.
+
+The first rule of React state management is to *never* update state directly either by assigning a new object to ```this.state``` or by changing properties of ```this.state```.
+
+Instead, we should *always* update state by passing a new object to ```this.setState``` because that is what instructs React to begin its update phase.
+
+Now that we understand a bit more about React state management, let's go back and fix our event handler:
+
+```javascript
+// snip
+if (emailAddress && password) {
+    localStorage.setItem("username", emailAddress);
+    this.setState({ username: emailAddress, validationError: null });
+} else {
+    this.setState({ username: null, validationError: "There was a problem logging you in. Please check your credentials and try again." });
+}
+// snip
+```
+
+Upon saving the document we can try our log in again and observe that the component's state now properly reflects our various well, states.
+
 ### Managing Login: Conditional Rendering
+
+### Logging Out
 
 <hr />
 

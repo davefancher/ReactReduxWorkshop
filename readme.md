@@ -427,7 +427,7 @@ We'll begin by adding a click handler to the button:
 
 Although this may look like the classic approach to hooking up a handler for the click event there is something we should discuss. First, notice how ```this.handleLogin``` is wrapped in curly braces. Recall from our earlier discussion that curly braces indicate that the value is the result of an expression. In this case we're telling React that this button's click handler is the component's ```handleLogin``` function.
 
-Now let's go ahead and define the event handler as a method on the ```LoginForm``` class.
+Now let's go ahead and define the event handler as a method on the ```LoginForm``` class. We're going to keep things simple here and forego the formality of creating controlled inputs and stick with a more traditional approach to reading form data. As we progress through the workshop we'll cycle back to forms and look at more formal approaches later.
 
 ```javascript
 handleLogin(e) {
@@ -443,11 +443,11 @@ handleLogin(e) {
 }
 ```
 
-*Although event handlers follow a familiar pattern in React they do behave a bit differently. One important difference is that the event passed to the handler isn't a native browser event but is rather a React supplied type called [SyntheticEvent](https://facebook.github.io/react/docs/events.html) which aims to standardize events across browsers. We won't spend time discussing them much here but should you so desire to learn more you can follow the link above.*
+> *Although event handlers follow a familiar pattern in React they do behave a bit differently. One important difference is that the event passed to the handler isn't a native browser event but is rather a React supplied type called [SyntheticEvent](https://facebook.github.io/react/docs/events.html) which aims to standardize events across browsers. We won't spend time discussing them much here but should you so desire to learn more you can follow the link above.*
 
 The handleLogin event handler is rather straightforward. It simply reads the username and password values from their respective input fields and ensures that they have been supplied. If we have both we persist the user name to local storage and update the component state to reflect the credentials otherwise we update the component state to reflect an error condition.
 
-Now save your file then jump to the browser, open the developer console, and try it out. Provided that you haven't jumped ahead in these exercises you'll quickly discover that clicking the "Log in" button results in an error stating that we can't read property ```setState``` of ```null```.
+Now save your file, jump over to the browser, open the developer console, and try it out. Provided that you haven't jumped ahead in these exercises you'll quickly discover that clicking the "Log in" button results in an error stating that we can't read property ```setState``` of ```null```.
 
 Both references to ```setState``` in the handler are against ```this``` implying that the ```setState``` method belongs to our component. Indeed, React's Component class does define a method called ```setState``` so what's going on? 
 
@@ -461,17 +461,17 @@ constructor(props) {
 }
 ```
 
-Now when we save the file our button should behave properly... or at least not display any errors.
+Now when we save the file our button should behave properly... or at least not display any errors in the console.
 
 ### Debugging: Introducing the React Developer Tools
 
-So far we haven't built in any conditional rendering logic to control how the component *reacts* to changes in its state so to verify that the state is actually changing we can turn to the [React Developer Tools](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi).
+Since we haven't yet built in any conditional rendering logic to control how the component *reacts* to changes in its state we can turn to the [React Developer Tools](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi) to verify that the state is actually changing.
 
 The React Developer Tools are a browser extension that lets us inspect the current state of our React application.
 
-Go ahead and open the developer tools if you don't already have them open then click over to the "React" tab.
+Go ahead and open the browser's developer tools if you don't already have them open then click over to the "React" tab.
 
-You should see a few panels. On the left is the document structure complete with component names. On the right is a listing of props and state.
+You should see a few panels. On the left is the document structure complete with component names. On the right is a listing of the selected components props and state. In more complex applications you can drill into child components and examine their state.
 
 Select the ```LoginForm``` element if it isn't already selected and observe how the state currently reflects the state we defined in ```LoginForm```'s constructor. Now try to log in without entering a user name or password. You should see the ```validationError``` flash yellow and update to reflect our error message. Now try logging in with some combination of credentials.
 
@@ -483,7 +483,7 @@ You should have seen the ```username``` flash yellow to highlight the change but
 
 > State updates are *merged* into the current state.
 
-This means that when we call ```setState``` the value we pass doesn't replace the current state. It's also the basis for composing more complex components.
+This means that when we call ```setState``` the passed value doesn't replace the current state but rather merges with it. At first this may seem counterintuitive but this is also a key aspect of composing more complex components.
 
 Speaking of ```setState```...
 
@@ -506,11 +506,274 @@ if (emailAddress && password) {
 // snip
 ```
 
-Upon saving the document we can try our log in again and observe that the component's state now properly reflects our various well, states.
+Upon saving the document we can try our log in again and observe in the React Developer Tools that the component's state now properly reflects our various, well, states.
+
+### Decoupling from the DOM
+
+As we just observed, our ```handleLogin``` function now reads our entered credentials but we've introduced a new dependency - reading those values from specific elements. For instance, to get the entered email address we use ```document.querySelector``` to locate an element with an ID of ```username```. This certainly works but wouldn't it be nice to remove that dependency and give the ```LoginForm``` component a reference to our two text boxes? This is where the [```ref``` attribute](https://facebook.github.io/react/docs/refs-and-the-dom.html) comes in handy.
+
+The ```ref``` attribute is a React feature that accepts a callback function which we can use to capture a reference to a DOM element. The supplied callback is invoked both when the component is mounted and when it's unmounted. React will pass either the created DOM element or null depending on when in the component's lifecycle the callback is being invoked.
+
+Let's see ```ref``` in action. We'll begin by modifying our JSX to include ```ref``` attributes so we can capture the DOM elements as properties (*not props*) of our ```LoginForm``` class.
+
+```javascript
+// snip
+<div className="form-group">
+    <label htmlFor="username">User Name:</label>
+    <input
+        type="text"
+        className="form-control"
+        placeholder="Email Address"
+        ref={element => this.username = element} />
+</div>
+<div className="form-group">
+    <label htmlFor="password">Password: </label>
+    <input
+        type="password"
+        className="form-control"
+        ref={element => this.password = element} />
+</div>
+// snip
+```
+
+React handles binding the callback to the component class so there's no need for us to manually bind anything in our constructor or add additional lifecycle functions.
+
+Now getting the value from the text boxes is simply a matter of accessing the class properties rather than performing a DOM lookup.
+
+```javascript
+handleLogin(e) {
+    var emailAddress = this.username.value;
+    var password = this.password.value;
+    // snip
+}
+```
+
+As you can see, this approach simplifies how we can get data from our form elements and even gives us the opportunity to change the underlying elements with minimal impact to the rest of the code. React refers to this approach as "uncontrolled" because we're working with the form elements in a more traditional manner without tapping into React's lifecycle. The downside of using uncontrolled input is that we lose th e ability to react to changes in those controls. For simple forms such as our login form, the uncontrolled approach is ideal but we'll look at a more "React-y" way of managing forms a bit later. 
 
 ### Managing Login: Conditional Rendering
 
+We've progressed far enough that we can start making our component react to the various state changes. For this component we need to handle both failed and successful login attempts.
+
+Recall from our earlier discussion about React's lifecycle that changes to state trigger the updating phase. This phase ultimately results in rerendering the component. Let's see this in action by implementing a few of the lifecycle functions before updating the ```render``` function to display the appropriate content for our state.
+
+```javascript
+export default class LoginForm extends Component {
+    // snip
+
+    componentWillMount() {
+        console.log("componentWillMount");
+    }
+
+    componentDidMount() {
+        console.log("componentDidMount");
+    }
+
+    componentWillReceiveProps() {
+        console.log("componentWillReceiveProps");
+    }
+
+    componentWillUpdate() {
+        console.log("componentWillUpdate");
+    }
+
+    componentDidUpdate() {
+        console.log("componentDidUpdate");
+    }
+
+    render() {
+        console.log("rendering");
+        return (
+            // snip
+        );
+    }
+}
+```
+
+Upon saving the file the page will refresh and we should immediately see the following in the console:
+
+```
+componentWillMount
+rendering
+componentDidMount
+```
+
+Now click the log in button and observe the updating phase functions get written to the console:
+
+```
+componentWillUpdate
+rendering
+componentDidUpdate
+```
+
+We should also see the same messages written to the console for a successful log in.
+
+> *Feel free to remove these functions as we included them only to observe the lifecycle and won't be using them for anything else.*
+
+Since the updating phase functions are called each time the state changes we can provide all of the display logic our form requires within the ```render``` function. Let's do that now by first handling a successful login attempt.
+
+```javascript
+render () {
+    if (this.state.username) {
+        return <div>Hello, {this.state.username}!</div>;
+    }
+
+    return (
+        // snip (same JSX as before)
+    );
+}
+```
+
+Entering some text in both fields and clicking the log in button should now result in the welcome message being displayed instead of the log in form.
+
+The beautiful thing about this process is that React applies the changes intelligently; it applies the changes against an in-memory copy of the DOM and only applies what changes to the browser.
+
+Now let's handle displaying the validation error. We really need to make a small change but remember, the ```render``` function must return exactly one item so we'll need to first wrap the current JSX within another ```div```.
+
+```javascript
+render() {
+    if (/* snip */) {
+        // snip
+    }
+
+    return (
+        <div>
+            // snip
+        </div>
+    );
+}
+```
+
+Now all that's left is to include an expression that returns either the validation error or null within our new ```div```.
+
+```javascript
+<div>
+    {this.state.validationError
+        ? <div className="alert alert-danger">
+            {this.state.validationError}
+            </div>
+        : null }
+    // snip
+</div>
+```
+
+Finally! We now have a component that properly handles our fake login and displays either the welcome message, the form, or the form and error message depending on our previous actions.
+
+Reviewing the code really reveals how easy it is to create intelligent, declarative, and fully-encapsulated components within React.
+
+As powerful as our simple ```LoginForm``` component is, it's still missing a few things. First, recall that when we first created the ```handleLogin``` function we had the successful case persist the email address to local storage. The purpose of doing that was to maintain our user context between page loads but if we refresh the page we see that our application has apparently forgotten who we are. Let's fix that.
+
+All we need to do is update our constructor logic to initialize the state's ```username``` property to the value in local storage.
+
+```javascript
+constructor(props) {
+    super(props);
+    this.state = {
+        validationError: null,
+        username: localStorage.getItem("username")
+    };
+
+    // snip
+}
+```
+
+Now save the file. If you were already logged on when the page refreshed you should still see the welcome message. If not, log in then refresh the page.
+
+This leaves us with a problem. How do we clear that user context? In other words? How do we log off?
+
 ### Logging Out
+
+Logging off itself is pretty straightforward. We know we'll need a button of some sort and another event handler. Let's start this feature by defining the event handler.
+
+```javascript
+handleLogoff(e) {
+    localStorage.removeItem("username");
+    this.setState({ username: null, validationError: null });
+}
+```
+
+Remember to ensure that the function is properly bound to the component class by adding the following to the constructor:
+
+```javascript
+this.handleLogoff = this.handleLogoff.bind(this);
+```
+
+With that in place let's take this opportunity to introduce a few more React concepts by using an anchor element instead of a button.
+
+```javascript
+render() {
+    if (this.state.username) {
+        return (
+            <div>
+                Hello, {this.state.username}! (<a href="#" onClick={this.handleLogoff}>Log Off</a>)
+            </div>
+        );
+    }
+
+    // snip
+}
+```
+
+By now this pattern should be starting to look familiar. We add the JSX that represents some HTML elements and attach an event handler to the link's click event.
+
+Go ahead and try out new functionality. You should observe that clicking the Log Off button clears our user context but did you notice that the URL also changed? That's because we used a link and allowed the default action to occur. Fixing this issue is a matter of modifying our event handler to suppress that as follows:
+
+```javascript
+handleLogoff(e) {
+    e.preventDefault();
+    // snip
+}
+```
+
+Remember that although this resembles the browser's native event, we're still working with React's *SyntheticEvent* to ensure consistent behavior across environments.
+
+### Custom Styling
+
+So far we've done very little in the way of styling our content and what we have done has relied on the default [Bootstrap 3.3](https://getbootstrap.com/docs/3.3/) classes. JSX does support an alternative which may be useful in certain circumstances so let's take a quick look at that now by customizing the look of our log off button.
+
+We'll do so by defining a new style object within our existing ```render``` function.
+
+```javascript
+render () {
+    if (this.state.username) {
+        var buttonStyle = {
+            border: "1px solid #AA0000",
+            borderRadius: "5px",
+            color: "#AA0000",
+            fontSize: "8pt",
+            fontWeight: "bold",
+            padding: "7px",
+            textDecoration: "none",
+            textTransform: "uppercase"
+        };
+
+        return ( /* snip */ );
+    }
+
+    // snip
+}
+```
+
+Notice how all of our new object's properties correspond with the JavaScript-friendly version of various CSS attributes. That's because React will use those properties to set the appropriate styles on the rendered element once we tell it which object to use. We do so like this:
+
+```javascript
+render () {
+    if (this.state.username) {
+        // snip
+
+        return (
+            <div>
+                Hello, {this.state.username}! <a href="#" onClick={this.handleLogoff} style={buttonStyle}>Log Off</a>
+            </div>
+        );
+    }
+
+    // snip
+}
+```
+
+Now when we save the file we should see the button style update to reflect what we specified with the style object.
+
+Like anything else, this approach has positive and negative aspects. It's good for keeping the styles with the components but short of passing certain styles around through props it feels rather limiting. It also doesn't easily support various underlying pseudo-classes such as ```a:hover``` which dramatically diminishes its utility.
 
 <hr />
 
@@ -522,6 +785,7 @@ Upon saving the document we can try our log in again and observe that the compon
 * [React](https://facebook.github.io/react/)
 * [React-Router](https://reacttraining.com/react-router/)
 * [Redux](http://redux.js.org/)
+* [Controlled vs Uncontrolled Inputs](https://goshakkk.name/controlled-vs-uncontrolled-inputs-react/)
 
 <hr />
 

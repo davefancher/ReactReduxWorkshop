@@ -777,6 +777,121 @@ Like anything else, this approach has positive and negative aspects. It's good f
 
 <hr />
 
+## Part 5: Differentiating Components
+
+So far we've worked through creating the project from scratch by importing the appropriate dependencies, defining a simple ```HelloWorld``` component, seeing how props and state relate to components, and building out a simulated login form. Now it's time to move on to the heart of the application.
+
+### Adding a Home Page
+
+Recall from earlier when we created our ```LoginForm``` component we instructed React to render the component to the page in ```index.jsx``` as follows:
+
+```javascript
+// snip
+
+ReactDOM.render(
+    <LoginForm />,
+    document.querySelector("#container")
+);
+```
+
+When we did this, the ```LoginForm``` component was all the application had to render but an application that does nothing but let a user log in or out isn't particularly useful so let's start making this feel like a "real" application by adding a basic home page.
+
+Create a new ```home``` folder under ```components``` then add new file called ```home.jsx``` in that folder.
+
+We need to import React and Container to define the home page component but since all we'll be rendering is some basic HTML and won't have any additional dependencies that's all we'll need.
+
+```javascript
+import React, { Component } from "react";
+```
+
+Now we can define the component. This component won't need to tap into the React lifecycle so a function component is sufficient.
+
+```javascript
+export default function Home () {
+    return (
+        <div>
+            Welcome!
+        </div>
+    )
+}
+```
+
+With that defined we now need to tell React to render it so let's jump back over to ```index.jsx``` to make that change.
+
+Remember, when React only works with one element at a time regardless of whether that element is returned from a function component, a class component's ```render``` function, or being passed to ```ReactDOM.render``` so we have a bit of a problem - ```ReactDOM.render``` is already acecpting an element - our ```LoginForm```.
+
+We've already seen one way to work around this in previous examples. We could simply wrap a ```div``` around ```Home``` and ```LoginForm``` but we're at a point where it's more important to question whether that's the right thing to do.
+
+### Container and Presentation Components
+
+As our application grows it becomes increasingly important to think about how its individual pieces interact with each other; ultimately we need to think about how the application is composed.
+
+One separation that tends to naturally fall out of dividing the application into focused components is that of *container* and *presentation* components.
+
+<dl>
+    <dt>Container Components</dt>
+    <dd>Container components are responsible for managing data and responding to state changes. They still provide the required ```render``` function but only to return another component.</dd>
+    <dt>Presentation Components</dt>
+    <dd>Presentation components are concerned what's actually being rendered based on the props supplied by a container component. These components generally have very little logic associated with them and as such are often defined as function components.</dd>
+</dl>
+
+We know our application is going to be more involved than a single page so it's really a good time to start thinking about our components in those terms and how they fit within our application.
+
+We could split our ```LoginForm``` component into two but it's pretty straightforward as it is and although refactoring it would be rather trivial let's focus our efforts on another area, namely, a container component for our app.
+
+Create a new folder named ```containers``` under the ```dev``` folder. Since this will be the root component for our application we'll just create a new file called ```appContainer.jsx``` in that new folder. We'll be needing the requisite React import so go ahead and add that to the new file, too. (This file will be a bit sparse for now but we'll definitely be coming back to it a few times throughout the rest of this workshop.)
+
+Since the whole point of creating a container component is to manage state among other things we'll want to define this as a class component.
+
+```javascript
+export default class AppContainer extends Component {
+    render () {
+        return null;
+    }
+}
+```
+
+This is a great start for our new container but right now it doesn't do anything. If we were to replace the ```LoginForm``` element in our ```index.jsx``` file right now we'd see nothing because ```AppContainer.render``` returns null. It is important to note though that ```AppContainer``` still extends ```Component```. This is because React makes no distinction between container components and presentation components - they're both components as far as React is concerned so the distinction is purely an architectural pattern. 
+
+Let's have this return some content by first importing the two components we're going to render - ```LoginForm``` and ```Home```.
+
+```javascript
+import LoginForm from "../components/app/loginForm.jsx";
+import Home from "../components/home/home.jsx";
+```
+
+Now let's make ```AppContainer``` return something more useful than ```null```.
+
+```javascript
+render () {
+    return (
+        <div>
+            <LoginForm />
+            <Home />
+        </div>
+    );
+}
+``` 
+
+And finally, let's replace references to ```LoginForm```  in ```index.jsx``` with the ```AppContainer```.
+
+```javascript
+// snip
+import AppContainer from "./containers/appContainer.jsx";
+// snip
+
+ReactDOM.render(
+    <AppContainer />,
+    document.querySelector("#container")
+);
+```
+
+Saving the file should again force the browser to refresh with the newly compiled changes now rendering both the ```LoginForm``` and ```Home``` content.
+
+Again, though, while we've wrapped our app into a container component and are now displaying content we're still not really doing anything useful. Since most modern applications get data from an API how about we create another component to do just that?
+
+<hr />
+
 ## Appendix A: Resources
 
 * [webpack](https://webpack.github.io/)
@@ -785,7 +900,9 @@ Like anything else, this approach has positive and negative aspects. It's good f
 * [React](https://facebook.github.io/react/)
 * [React-Router](https://reacttraining.com/react-router/)
 * [Redux](http://redux.js.org/)
+* [React createClass vs Component](https://toddmotto.com/react-create-class-versus-component/)
 * [Controlled vs Uncontrolled Inputs](https://goshakkk.name/controlled-vs-uncontrolled-inputs-react/)
+* [React's Component Lifecycles](https://medium.com/mofed/reacts-component-lifecycles-adf0ebc89d23)
 
 <hr />
 

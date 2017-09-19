@@ -892,6 +892,43 @@ Again, though, while we've wrapped our app into a container component and are no
 
 <hr />
 
+## Part 6: External Data
+
+At the beginning of this workshop we saw a preview of the completed project. In that demo we showcased some data from the publically accessible, open source API: [An API of Ice and Fire](https://anapioficeandfire.com/), a fan created and maintained database of information pulled from the Game of Thrones TV series and Ice and Fire novels. In this section we'll begin connecting to that API so we can show its data.
+
+The API puts data in several categories:
+
+* Books
+* Characters
+* Houses
+
+We're going to focus on the character data today but the others would be excellent opportunities to continue experimenting with React on your own.
+
+### Getting External Data
+
+One of the most beautiful things about React is that it is a highly focused library. Unlike other libraries, React focuses on one thing - building declarative user interfaces - and does that one thing very well. Of course, what this means is that there are a great many things that fall outside of React's scope and working with external data is just one of those things that React isn't directly concerned with. As such we're free to select whichever approach suits our needs best.
+
+For working with external data there are plenty of options available. Perhaps an application already has [jQuery](http://jquery.com/) and is using ```$.ajax``` (Note: mixing React and jQuery is generally a bad idea but can work for some things). Maybe the [Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) is a good fit because we know our users will be using browsers that support it. Maybe a plain ol' XmlHttpRequest is more than sufficient. The point is React doesn't dictate how we get that data. React only cares how to render it.
+
+For our purposes in the workshop we're going to use the [axios](https://www.npmjs.com/package/axios) library. Axios provides a simple interface quite similar to that offered by jQuery's [ajax](http://api.jquery.com/jQuery.ajax/) function but like React, axios is focused on just its one task - making network requests. It's also [promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)-based so it's very easy to wire-up the appropriate callback functions.
+
+### Installing Axios
+
+We can install axios by running the following terminal command:
+
+```
+npm install axios --save
+```
+
+Now we're free to reference axios within our application.
+
+
+<hr />
+
+## Routing and Navigation
+
+<hr />
+
 ## Appendix A: Resources
 
 * [webpack](https://webpack.github.io/)

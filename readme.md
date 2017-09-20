@@ -898,9 +898,9 @@ At the beginning of this workshop we saw a preview of the completed project. In 
 
 The API puts data in several categories:
 
-* Books
 * Characters
 * Houses
+* Books
 
 We're going to focus on the character data today but the others would be excellent opportunities to continue experimenting with React on your own.
 
@@ -920,8 +920,110 @@ We can install axios by running the following terminal command:
 npm install axios --save
 ```
 
-Now we're free to reference axios within our application.
+Now we're free to reference axios within our application. For convenience, we're going to define our interactions with axios, and the Ice and Fire API by extension, in a separate module, outside the context of any controller and simply provide an interface of sorts. This allows us to keep our modules concerned with only manipulating the DOM *and* it gives us a really easy way to replace that functionality later when we want to save *a lot* of typing!
 
+Create a new file in the ```dev``` folder called ```iceAndFireRepository.js```. Note that we've used the ```.js``` extension to indicate that this is just a JavaScript module and not a React component.
+
+> We're going to skim over many of the implementation details here as they're more related to the Ice and Fire API than React or even axios. Every API comes with its own requirements and interfaces and since we're using this particular API for demonstration only it's not really important to cover them in detail. What is important is the overall process of interacting with an API.
+
+The first thing we'll do is import the axios package.
+
+```javascript
+import axios from "axios";
+```
+
+Next up is to define a few constants we'll use to access the API. These identify the URL and tell the API which version we want to use.
+
+```javascript
+const API_URL = "https://www.anapioficeandfire.com/api/";
+const API_VERSION_HEADER = "application/vnd.anapioficeandfire+json; version=1";
+
+const API_REQUEST_HEADER = {
+    "headers": {
+        "accept": API_VERSION_HEADER
+    }
+};
+
+const API_CATEGORY = {
+    CHARACTERS: "characters"
+};
+```
+
+Now we can use axios to get some data. Given the URL structure that this particular API uses we can write some generalized functions to handle requests and export a function to get a page of character data.
+
+```javascript
+const get =
+    url => axios.get(url, API_REQUEST_HEADER);
+
+const getPage =
+    category =>
+        (page, pageSize) =>
+            get(`${API_URL}/${category}?page=${page}&pageSize=${pageSize}`);
+
+export const getCharacters = getPage(API_CATEGORY.CHARACTERS);
+```
+
+There are a few arrows in there but the code is really just breaking down the process of making the request into some composable units. The ```get``` function accepts the URL we're having axios GET for us. The ```getPage``` function is a higher-order function that accepts the data category (character, house, book) and returns another function which accepts pagination information, constructs a URL, and forwards it on to ```get```. Finally, the ```getCharacters``` function is a partial application of ```getPage``` specifically tailored to getting character data.
+
+Ultimately, when we invoke ```getCharacters``` we're given an ```axiosPromise``` object which conforms to the ES6 promise spec so we can handle the asynchronous operation as we might expect.
+
+This highly functional approach to getting data really isn't all that different from how we compose React components and is indeed the model upon which React composition is based. Our data flows into one function (```getCharacters```) which adds some additional data to flow into another function (```getPage```) which formats a URL and forwards it on to another function (```get```) which in turn makes a request via ```axios.get```. Data always flows in one direction through the chain ultimately resulting in that promise.
+
+Now let's build out a controller to observe this in action. 
+
+### Our First Request
+
+Create a folder named ```characters``` under the ```components``` folder and in that folder create a file named ```characterList.jsx```. All the usual setup applies but we also need to import our new ```iceAndFireRepository```
+
+```javascript
+import * as IceAndFire from "../../iceAndFireRepository.js";
+```
+
+Next up is to define the component. We'll definitely need to tap into the React lifecycle on this one so let's define it as a class component, making sure to declare some initial state. Since this component is going to represent a list of characters returned from the API it seems like an array named ```characters``` would be a good starting point.
+
+```javascript
+export default class CharacterList extends Component {
+    constructor (props) {
+        super(props);
+
+        this.state = {
+            characters: []
+        };
+    }
+
+    render () {
+        return null;
+    }
+}
+```
+
+For now we're not going to render anything. This will give us another good opportunity to use the React Developer Tools and observe some behavior which we can use to drive the rendering logic.
+
+Where in the ```CharacterList``` component should we invoke our API request? A moment ago we mentioned needing to tap into the React lifecycle and the [lifecycle documentation](https://facebook.github.io/react/docs/react-component.html) gives us a pretty clear answer:
+
+> "If you need to load data from a remote endpoint, [componentDidMount] is a good place to instantiate the network request."
+
+We should initiate the request in ```componentDidMount```.
+
+```javascript
+componentDidMount () {
+    IceAndFire
+        .getCharacters(1, 25)
+        .then(
+            response =>
+                this.setState({
+                    characters: response.data
+                }));
+}
+```
+
+Our ```componentDidMount``` function consists of a single expression which initiates the request for the first page of 25 characters. When the request is complete we simply update the component state to reference the returned list.
+
+Now add the component to the page in ```index.jsx``` and go to the browser. The visible page content shouldn't change but something has happened behind the scenes which you can observe in the React Developer Tools.
+
+### Observing the State Change
+
+### Listing the Characters
 
 <hr />
 

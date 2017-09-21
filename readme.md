@@ -1023,7 +1023,99 @@ Now add the component to the page in ```index.jsx``` and go to the browser. The 
 
 ### Observing the State Change
 
-### Listing the Characters
+Because we didn't have much interesting to look at when we examined our ```LoginForm```'s state, let's repeat that exercise with our slowly growing page.
+
+This page now consists of several layers of components and elements. When the page loads the React Developer Tools will now allow us to drill into the overall structure starting at the top level: the ```AppContainer```. By default this node is selected and we the tools correctly report that there are no props, or, more specifically, that the props are an empty object. Let's drill into the child components by expanding the ```AppContainer``` element.
+
+If we select the ```LoginForm``` element we'll see the same state values we observed before. If you're logged in you'll see the ```username``` set otherwise you'll see ```null``` for that value.
+
+The ```Home``` component is simply displaying a welcome message so there's nothing interesting to look at there but what about our new ```CharacterList``` component? When we initialized the state in its constructor we explicitly set the ```characters``` value to an empty array but the developer tools are showing us very clearly that it's an array of 25 items! These were populated when our API request completed and se handed them over to the component via the call to ```setState```!
+
+### Data Munging with Azios
+
+Now that we've observed that we're definitely getting data back from our API request we're close to extending the ```CharacterList``` component to write out that list of characters.
+
+One thing to note about the data from this API is that it isn't necessarily the cleanest data around. Take a moment to drill into the ```characters``` array in the developer tools. You should pretty quickly find that a great many characters are missing a name but fortunately those characters generally have at least one item in their ```aliases``` collection. In fact, there are lots of subtle things in the results that we could clean up if we continued to hand off the results to our component directly. To simplify our rendering logic we can augment our ```IceAndFireRepository``` to handle some of that munging (transformation and other cleanup) so we can keep our component focused on rendering the data.
+
+Just to keep things simple we'll merely return an object that simply contains the character name or alias if the name isn't available.
+
+We'll start by changing the ```getPage``` definition to accept a function we'll call ```munge``` and iterate over the resulting data, passing each item to that function:
+
+```javascript
+const getPage =
+    (category, munge) =>
+        (page, pageSize) =>
+            get(`${API_URL}/${category}?page=${page}&pageSize=${pageSize}`)
+                .then(response => response.data.map(munge));
+```
+
+Notice how getPage is now providing a callback for ```then``` rather than simply returning that ```axiosPromise``` like it was before. This gives us a convenient way to transform the response before handing it off to the caller. We could also provide a ```catch``` callback here in case of an error but we'll leave that for later when we can see a clean way of handling the errors. Regardless, axios still returns a promise to the caller, it will just resolve with the cleaned data rather than the actual HTTP response.
+
+Now let's implement the munging function. It's really complicated:
+
+```javascript
+const mungeCharacter =
+    character => ({
+        name : character.name || (character.aliases[0] + "*")
+    });
+```
+
+All we're doing here is returning a new object based on the supplied character. If ```character.name``` is ```falsy``` we return the first alias with an asterisk signifying that we didn't find a name.
+
+Next we'll pass the ```mungeCharacter``` function to ```getPage``` from the ```getCharacters``` function.
+
+```javascript
+export const getCharacters = getPage(API_CATEGORY.CHARACTERS, mungeCharacter);
+```
+
+Finally we need to make a change to our ```CharacterList``` component because we've changed the structure of the data returned by the promise. Now we simply need to set the ```characters``` state value to ```response``` rather than ```response.data```.
+
+That's it! Save the file and observe that the ```CharacterList``` state now contains a collection of 25 objects, each of which include a name. Our data is now ready to be displayed!
+
+### Displaying the Data
+
+Rendering this data is similar to what we've seen previously except now there's a bit of a twist. So far we've seen rendering only single values but never a collection. Clearly we'll need some type of looping construct but there's slightly more to it than that.
+
+For now let's just render the characters as a bulleted list.
+
+```javascript
+render () {
+    return (
+        <ul>
+        </ul>
+    );
+}
+```
+
+This sets us up to render the list but would you believe that rendering the items can be accomplished with only one more line? It's true!
+
+```javascript
+render () {
+    return (
+        <ul>
+            {this.state.characters.map(c => <li>{c.name}</li>)}
+        </ul>
+    );
+}
+```
+
+To render the items we just have to map each one to an ```li``` element!
+
+Now save the file and observe what happens in the browser's console window. You should see a warning from React stating that *each child in an array or iterator should have a unique "key" prop*.
+
+We've excluded an important piece of information that React needs to efficiently apply any changes to the underlying model to the DOM. To resolve this we need to add a prop named "key" to each ```li``` element. The value we provide should uniquely identify each item. The natural choice for this would be the item's unique identifier but since we didn't include that piece of information in our refined model we'll just set it to the element's index within the collection.
+
+```javascript
+render () {
+    return (
+        <ul>
+            {this.state.characters.map((c, ix) => <li key={ix}>{c.name}</li>)}
+        </ul>
+    );
+}
+``` 
+
+Finally, saving the file should result in a bulleted list of 25 items and no warning from React.
 
 <hr />
 

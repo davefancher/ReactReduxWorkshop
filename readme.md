@@ -1119,7 +1119,203 @@ Finally, saving the file should result in a bulleted list of 25 items and no war
 
 <hr />
 
-## Routing and Navigation
+## Part 7: Routing and Navigation
+
+Now our application is starting to take shape. We have a functioning login form and a listing of characters we've retrieved from the Ice and Fire API. We still have quite a problem though - our single-page app (SPA) is just that, a single page. There's nothing in here yet to give the illusion of navigating around pages even though we've clearly separated the ```Home``` container from the ```CharacterList``` container. Let's fix that by introducing a new package: [```React Router```](https://reacttraining.com/react-router/).
+
+React Router is a component-based, declarative navigation model which provides an easy way to swap out visible components while providing a deep-linking mechanism for easy, URI-based access to specific parts of our application.
+
+While many popular environments (including previous versions of React Router) primarily focus on static routing, that is, having routes defined as part of the initialization process, React Router takes a fundamentally different approach by handling routes dynamically as components. This means that rather than having to specify every route in one place we can define them where they're used.
+
+> There are a few versions of React Router available. The one we're going to use and the one discussed here is version 4.
+
+Like anything else in software there are trade-offs associated with each approach. One of the biggest benefits of the dynamic approach is that our applications are free to evolve but the impact to other sections of the application from adding and removing features is kept to a minimum.
+
+There are only a few key components and concepts that we're concerned with for our application:
+
+<dl>
+    <dt>Routers</dt>
+    <dd>Routers manage transitioning between routes and managing the route history. There are a few different kinds of routers we can use and we'll discuss a few of them a bit later.</dd>
+    <dt>Routes</dt>
+    <dd>Routes render the content that corresponds to a particular path/URI. By default routes are rendered inclusively - as long as the path matches, the route will be rendered.</dd>
+    <dt>Switches</dt>
+    <dd>Switches are route groups where only one route will be rendered even if other routes in the group match the path.</dd>
+    <dt>Links</dt>
+    <dd>Links provide a component-based mechanism for interacting with the router and thus navigating around the application.</dd>
+</dl>
+
+> React Router is a powerful tool for our React Applications but we're only going to highlight a few of its features here. Be sure to check out the [documentation](https://reacttraining.com/react-router/web/guides/philosophy) to learn more about its full capabilities.
+
+Now that we know a bit about the router it's time to add it to our application.
+
+### React Router: Installation
+
+We install React Router like any other npm package.
+
+```
+npm install react-router-dom --save
+```
+
+This package allows the router to interact with the DOM but also has a dependency on the ```react-router``` package which we also need so simply installing it is enough to get the other packages we need for this exercise.
+
+Once the package has been installed we can import it into our app. But where?
+
+### React Router: Adding a Router
+
+Recall from before we added axios we split a container component called ```AppContainer``` away from ```index.jsx```. This component is intended to serve as the wrapper for our entire application and Routers are typically defined at the application root, this seems like a natural place.
+
+Add the following ```import``` directive to ```appContainer.jsx```:
+
+```javascript
+import { BrowserRouter, Route, Switch, NavLink} from "react-router-dom";
+```
+
+This ```import``` directive makes the specified components available to our ```appContainer```. We'll be using each of them over the next few sections but since the heart of this functionality is the router let's start there.
+
+As you can tell from our freshly added ```import``` directive, we're going to use a router called ```BrowserRouter```. This is just one of several routers that React Router provides, each having their own specific focus. For instance, ```BrowserRouter``` takes advantage of the HTML5 history APIs while ```HashRouter``` uses the hash portion of the URL to support older browsers. There are a few others as well but those are well beyond the scope of this workshop so let's get back to adding the router to our application.
+
+The router is our application's outermost component so we'll activate it simply by wrapping the existing render content in a ```<BrowserRouter>``` element like so:
+
+```javascript
+render () {
+    return (
+        <BrowserRouter>
+            // snip
+        </BrowserRouter>
+    );
+}
+```
+
+As a container component, the router doesn't change the look of our page in any tangible way so let's continue on. We're going to use ```Switch```es and ```Route```s to split our application into navigable pages. 
+
+Let's keep our overall page structure in place but wrap the existing ```Home``` and ```CharacterList``` components within a new ```Switch``` component:
+
+```javascript
+<div>
+    <LoginForm />
+    <Switch>
+        <Home />
+        <CharacterList />
+    </Switch>
+</div>
+```
+
+One interesting point about ```Switch``` is that since it returns only the first matching element and we haven't any route constraints, only our ```Home``` component will be rendered right now. If we were to switch around the order of the elements within the ```Switch``` only the ```CharacterList``` would be rendered.
+
+So how do we add constraints to our ```Home``` and ```CharacterList``` elements? We need to wrap them each within individual ```Route``` components and specify the path to which each will resolve.
+
+```javascript
+<Switch>
+    <Switch>
+        <Route path="/">
+            <Home />
+        </Route>
+        <Route path="/characters">
+            <CharacterList />
+        </Route>
+    </Switch>
+</Switch>
+```
+
+> For those with some React experience, the above snippet probably looks pretty ugly. Don't worry, we'll clean it up shortly!
+
+### Webpack Dev Server: Enabling Deep Linking
+
+Great! Now we have some ```Route```s defined so let's try them out. If you refresh the page you should see the familiar welcome message but what happens when you try to navigate to ```/characters```?
+
+You should see a message stating
+
+```
+Cannot GET /characters
+```
+
+This is the Webpack Dev Server's 404 message. We're building a single-page app and relying on the ```BrowserRouter``` and ```Routes``` to determine what content to display but when we enter ```/characters``` in the browser's address bar the server tries to serve content hosted at that address rather than the root. We can fix this with a single tweak to our ```start``` task in ```package.json```.
+
+```javascript
+{
+    // snip
+    "scripts": {
+        // snip
+        "start": "webpack-dev-server --open --history-api-fallback",        
+        // snip
+    }
+    // snip
+}
+```
+
+Now save the file and restart the server (```CTRL + C``` then ```npm start```). When the browser opens try navigating to ```/characters``` again and observe the result. You should see the page load properly because the ```--history-api-fallback``` option tells the server to respond with ```/index.html``` in the event of a 404 thus enabling deep-linking but instead of the character list we see the same welcome message even though we expected to see the character list.
+
+Why?
+
+The reason is that the routes are matched top-down and the matching algorithm looks at path segments. ```/characters``` is a child of ```/``` so both of our routes match. Since ```Switch``` returns the first match even though we wanted the second, ```Home``` is rendered instead of ```CharacterList```. The workaround is to add another attribute to the route:
+
+```javascript
+<Route path="/" exact>
+    <Home />
+</Route>
+```
+
+Now when the matching algorithm inspects the first route it will find that it does match but because it's not an exact match the algorithm will move on to the next route thus rendering the ```CharacterList``` component.
+
+### React Router: Route Options
+
+Before we add navigation to our page let's return our focus to the Routes we defined a little while ago.
+
+When we defined those routes we specified our ```Home``` and ```CharacterList``` components as *children* of the ```Route```s. This is certainly acceptible but you'll likely more often specify them through the ```component``` attribute even if for no other reason than it's a bit cleaner.
+
+```javascript
+<Switch>
+    <Route path="/" exact component={Home} />
+    <Route path="/characters" component={CharacterList} />
+</Switch>
+```
+
+We don't necessarily have to specify a component directly, though. The ```Route``` component exposes another attribute called ```render``` which accepts a function and gives us more programmatic control over what's rendered when the route is matched. All of the route props are also forwarded on to the render function so we're free to use them within the function.
+
+We can see this if we temporarily replace one of our routes with a function.
+
+```javascript
+<Route path="/"
+        exact
+        render={props =>
+            <div>You are viewing the content for: {props.match.path}</div>} />
+```
+
+Our application doesn't need us to do this but it's good to know about so go ahead and undo the change.
+
+### React Router: Unmatched Paths
+
+A little while ago our server gave us a 404 when we tried to access ```/characters``` so we modified the server behavior to always return ```/index.html``` regardless of what was requested and let React Router handle displaying the content based on the path. But what if the user enters something that legitimately doesn't exist within our application?
+
+Try navigating to something like ```/notfound```. What do you see?
+
+You should see the page title and ```LoginForm``` but it would be nice to communicate to our user that they've tried accessing something that doesn't exist. We can handle this easily by simply adding a default ```Route```. For fun we'll implement this through the ```render``` attribute rather than building a formal component.
+
+```javascript
+<Route render={
+    props =>
+        <div className="spacerTop alert alert-danger">
+            Sorry, the resource you requested ({props.location.pathname}) does not exist.
+        </div>} />
+```
+
+Once again try navigating to an invalid path and you should now see the not found message. But what if we try going to something like ```/characters/20```? We'll eventually have this as a valid route but as far as the current state of our application is concerned, this isn't valid so we should see the error, right?
+
+Navigating to that URI still shows the character list because ```/characters``` matches a valid route and the ```20``` is just ignored by router. We have some flexibility in how to solve this but for the time being let's implement the easiest solution: requiring the ```/characters``` route to match exactly.
+
+```javascript
+<Route path="/characters" exact component={CharacterList} />
+```
+
+### React Router: Navigation 
+
+### React Router: Child Routes
+
+### React Router: Unmatched Paths (Revisited)
+
+<hr />
+
+## Part 8: Redux
 
 <hr />
 

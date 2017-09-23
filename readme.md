@@ -19,11 +19,80 @@
 <!-- Whiteboard Stuff -->
 
 * What is React?
+
+On a basic level, it's a library for building user interfaces with JavaScript. It began at Facebook in 2011 and was open sourced in 2013. Since then, it's grown to be used and supported by many major companies and it now has robust 3rd party library integrations and the [most framework specific libraries](https://github.com/enaqx/awesome-react).
+Beyond the web, it's become a paradigm of sorts for building mobile, desktop, tv, and other kinds of applications with JavaScript.
+
+The idea is that instead of using the standard layout of separating concerns into JavaScript, HTML, and CSS. You will render your views (and potentially css as well) from your JavaScript.
+
+*If you have questions about using React because of the recent license & patent clause stir with React and Facebook, here is [a good explanation of the whole thing](https://medium.com/@dwalsh.sdlr/react-facebook-and-the-revokable-patent-license-why-its-a-paper-25c40c50b562) and [here is a response from the Facebook team](https://code.facebook.com/posts/112130496157735/explaining-react-s-license/).
+
 * Anatomy of a React application
     * Components
     * Props - read-only; the static pieces
     * State - updatable; the pieces that change
-* Data *always* flows downward
+    
+A React app is made up of a series of components which can contain their own dynamic state. Here is an example of a simple counter component which maintains it's own state:
+[React Component Screenshot](https://s3.amazonaws.com/react-workshop/react-intro.png)
+
+And ends up looking like this when rendered (more on rendering in a future section):
+[counter view](https://s3.amazonaws.com/react-workshop/Screen+Shot+2017-09-23+at+8.57.41+AM.png)
+
+If state or some kind of data is passed to another component, it is called props and is read only. If we take the previous example and move the buttons into a child component, we can pass any functions or data we need to the child using props:
+
+```js
+// ButtonHolder.js
+import React from 'react';
+
+const ButtonHolder = (props) => {
+  var {addOne, sub} = props;
+
+  return (
+    <div>
+      <button className="button" onClick={addOne}>+</button>
+      <button className="button hollow" onClick={sub}>-</button>
+    </div>
+  )
+}
+
+export default ButtonHolder;
+```
+
+```js
+// App.js
+import React, { Component } from 'react';
+import ButtonHolder from './ButtonHolder';
+
+class App extends Component {
+  constructor () {
+    super();
+    this.state = {
+      counter: 0
+    };
+  }
+  add () {
+    this.setState({
+      counter: this.state.counter + 1
+    })
+  }
+  subtract () {
+    this.setState({
+      counter: this.state.counter - 1
+    })
+  }
+  render() {
+    return (
+      <div className='content-component'>
+        <h1>Counter {this.state.counter}</h1>
+        <ButtonHolder addOne={this.add.bind(this)} sub={this.subtract.bind(this)}/>
+      </div>
+    );
+  }
+}
+export default App;
+```
+    
+* Note: In React applications, data *always* flows downward. Displaying and manipulating props will never change the state in the parent component. When state changes in the parent, it will effect children relying on that state, but not the other way around.
 
 <hr />
 

@@ -1498,6 +1498,10 @@ Let's go back to the application one more time and try a few different URIs to s
 
 ***Coming Soon***
 
+## Module 9: Adding Redux
+
+***Coming Soon***
+
 <hr />
 
 ## Appendix A: Resources

@@ -579,6 +579,19 @@ if (emailAddress && password) {
 
 Upon saving the document we can try our log in again and observe in the React Developer Tools that the component's state now properly reflects our various, well, states.
 
+It's also worth noting here that state updates aren't necessarily synchronous. Instead, values sent to ```setState``` are pushed onto a queue so that React may decide to apply several state updates as a batch. The implication of this is that we shouldn't rely on the current state value(s) when setting state. Instead, we can pass the ```setState``` function a function which accepts both the previous known state and props. For example, we could rewrite the first call to ```setState``` in the last example as follows:
+
+```javascript
+this.setState(
+    (prevState, props) => ({
+        username: emailAddress,
+        validationError: null
+    })
+);
+```
+
+We're keeping things simple in this example and not taking dependencies on previous states so we'll stick with the basic form.
+
 ### Decoupling from the DOM
 
 As we just observed, our ```handleLogin``` function now reads our entered credentials but we've introduced a new dependency - reading those values from specific elements. For instance, to get the entered email address we use ```document.querySelector``` to locate an element with an ID of ```username```. This certainly works but wouldn't it be nice to remove that dependency and give the ```LoginForm``` component a reference to our two text boxes? This is where the [```ref``` attribute](https://facebook.github.io/react/docs/refs-and-the-dom.html) comes in handy.

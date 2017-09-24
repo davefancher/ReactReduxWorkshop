@@ -14,7 +14,7 @@
 
 <hr />
 
-## Part 1: Introducing React
+## Module 1: Introducing React
 
 <!-- Whiteboard Stuff -->
 
@@ -27,7 +27,7 @@
 
 <hr />
 
-## Part 2: My First React Project (Overview & Setup)
+## Module 2: My First React Project (Overview & Setup)
 
 Throughout the workshop we'll gradually build out an application that allows us to interact with some data from [An API of Ice and Fire](https://anapioficeandfire.com/). The application will be a great foundation for continuing study as it will be loaded with examples of how to accomplish a variety of tasks with React and Redux.
 
@@ -43,7 +43,7 @@ The initial setup for a React application can be a bit tedious but it's importan
 git init
 ```
 
-Copy ```.gitignore``` from the ```Part2``` folder.
+Copy ```.gitignore``` from the ```Module``` folder.
 
 ### Initializing the npm package:
 
@@ -91,7 +91,7 @@ npm install --save-dev node-sass sass-loader css-loader style-loader
 
 ### Configuring Babel and Webpack
 
-Now that Babel and Webpack are installed we need to configure them. Copy both ```.babelrc``` and ```webpack.config.js``` from the ```Part2``` folder.
+Now that Babel and Webpack are installed we need to configure them. Copy both ```.babelrc``` and ```webpack.config.js``` from the ```Module2``` folder.
 
 Babel uses the ```.babelrc``` file to identify which transformers to use to convert our modern JSX code to JavaScript.
 
@@ -109,9 +109,9 @@ We'll start with the ```dev``` folder which will contain our JavaScript and SASS
 mkdir dev
 ```
 
-Next, let's add an ```index.html``` file in our application root. You can copy the file from the ```Part2``` folder.
+Next, let's add an ```index.html``` file in our application root. You can copy the file from the ```Module2``` folder.
 
-Finally, let's add the ```index.jsx``` and ```site.scss``` files to the ```dev``` folder. You can again copy these from the ```Part2``` folder.
+Finally, let's add the ```index.jsx``` and ```site.scss``` files to the ```dev``` folder. You can again copy these from the ```Module2``` folder.
 
 ### Configuring Build and Start Scripts
 
@@ -136,7 +136,7 @@ Congratulations! Your app is now configured!
 
 <hr />
 
-## Part 3: My First React Project: Hello World
+## Module 3: My First React Project: Hello World
 
 In the last section we built created our workspace and imported all the necessary components to build a simple React application but we haven't actually started using React yet since all we're serving up is some HTML.
 
@@ -268,13 +268,13 @@ Although the end result will the same as before we've begun the process of build
 
 <hr />
 
-## Part 4: Class Components
+## Module 4: Class Components
 
 In the last section we defined a component as a single JavaScript function but we'll quite frequently not only need our components to manage their data but we may also need more control over the components' lifecycle. That's where component classes come in.
 
 Just like their functional counterparts are based on JavaScript functions, class components are based on JavaScript classes. This approach gives us more control over an individual component's behavior.
 
-From here on, we'll no longer need the ```HelloWorld``` component so you can safely delete it from your ```index.jsx``` file. Don't worry about losing the example of a functional component because we'll be building up several more as we develop the application. (You can also refer back to the ```HelloWorld``` example in the ```Part3``` folder if you'd like to see it again.)
+From here on, we'll no longer need the ```HelloWorld``` component so you can safely delete it from your ```index.jsx``` file. Don't worry about losing the example of a functional component because we'll be building up several more as we develop the application. (You can also refer back to the ```HelloWorld``` example in the ```Module3``` folder if you'd like to see it again.)
 
 A common task in Web applications is providing a way for users to log in. We're not going to go to the extent of connecting to an actual authentication system but we will fake it by providing a log in form and using local storage to persist that state.
 
@@ -290,7 +290,7 @@ import React, { Component } from "react";
 
 Because we want React to handle placing the login form on the page we don't need to import ```ReactDOM```. We will, however, have to tell ```index.jsx``` about the form but we'll come back to that in due time.
 
-Next we'll create the initial structure for the component (feel free to copy this from the ```Part4``` folder):
+Next we'll create the initial structure for the component (feel free to copy this from the ```Module4``` folder):
 
 ```javascript
 export default class LoginForm extends Component {
@@ -777,7 +777,7 @@ Like anything else, this approach has positive and negative aspects. It's good f
 
 <hr />
 
-## Part 5: Differentiating Components
+## Module 5: Differentiating Components
 
 So far we've worked through creating the project from scratch by importing the appropriate dependencies, defining a simple ```HelloWorld``` component, seeing how props and state relate to components, and building out a simulated login form. Now it's time to move on to the heart of the application.
 
@@ -892,7 +892,7 @@ Again, though, while we've wrapped our app into a container component and are no
 
 <hr />
 
-## Part 6: External Data
+## Module 6: External Data
 
 At the beginning of this workshop we saw a preview of the completed project. In that demo we showcased some data from the publically accessible, open source API: [An API of Ice and Fire](https://anapioficeandfire.com/), a fan created and maintained database of information pulled from the Game of Thrones TV series and Ice and Fire novels. In this section we'll begin connecting to that API so we can show its data.
 
@@ -1119,7 +1119,7 @@ Finally, saving the file should result in a bulleted list of 25 items and no war
 
 <hr />
 
-## Part 7: Routing and Navigation
+## Module 7: Routing and Navigation
 
 Now our application is starting to take shape. We have a functioning login form and a listing of characters we've retrieved from the Ice and Fire API. We still have quite a problem though - our single-page app (SPA) is just that, a single page. There's nothing in here yet to give the illusion of navigating around pages even though we've clearly separated the ```Home``` container from the ```CharacterList``` container. Let's fix that by introducing a new package: [```React Router```](https://reacttraining.com/react-router/).
 
@@ -1494,7 +1494,7 @@ Let's go back to the application one more time and try a few different URIs to s
 
 <hr />
 
-## Part 8: Introducing Redux
+## Module 8: Introducing Redux
 
 ***Coming Soon***
 

@@ -27,6 +27,8 @@ The idea is that instead of using the standard layout of separating concerns int
 
 *If you have questions about using React because of the recent license & patent clause stir with React and Facebook, here is [a good explanation of the whole thing](https://medium.com/@dwalsh.sdlr/react-facebook-and-the-revokable-patent-license-why-its-a-paper-25c40c50b562) and [here is a response from the Facebook team](https://code.facebook.com/posts/112130496157735/explaining-react-s-license/).
 
+> On September 22, 2017 Facebook [announced](https://code.facebook.com/posts/300798627056246/relicensing-react-jest-flow-and-immutable-js/) that they were changing the license used by React. As of version 16, React will no longer use the BSD + Patents license and will instead use the MIT license. 
+
 * Anatomy of a React application
     * Components
     * Props - read-only; the static pieces

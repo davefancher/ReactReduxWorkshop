@@ -1251,7 +1251,7 @@ Recall from before we added axios we split a container component called ```AppCo
 Add the following ```import``` directive to ```appContainer.jsx```:
 
 ```javascript
-import { BrowserRouter, Route, Switch, NavLink} from "react-router-dom";
+import { BrowserRouter, Route, Switch, Link} from "react-router-dom";
 ```
 
 This ```import``` directive makes the specified components available to our ```appContainer```. We'll be using each of them over the next few sections but since the heart of this functionality is the router let's start there.
@@ -1320,7 +1320,7 @@ This is the Webpack Dev Server's 404 message. We're building a single-page app a
     // snip
     "scripts": {
         // snip
-        "start": "webpack-dev-server --open --history-api-fallback",        
+        "start": "webpack-dev-server --open --history-api-fallback",
         // snip
     }
     // snip
@@ -1506,13 +1506,15 @@ We haven't defined the ```CharacterDetail``` component yet so let's do that now:
 ```javascript
 const CharacterDetail =
     props =>
-        <div className="spacerTop">Details for character: {props.match.params.id}</div>
+        <div className="spacerTop">Details for character: {props.match.params.id}</div>;
+
+export default CharacterDetail;
 ```
 
 Let's now connect this new ```CharacterHome``` component to our ```AppContainer```. We can do this by replacing the ```CharacterList``` import and changing the ```component``` prop for the respective route in ```appContainer.jsx```.
 
 ```javascript
-import CharacterHome from "../containers/characters/characterHome.jsx";
+import CharacterHome from "./characters/characterHome.jsx";
 ```
 
 Finally, let's modify our ```CharacterList``` component to render some ```Link```s so we can see these new routes responding accordingly. Let's begin by creating a simple function component above our ```CharacterList```.
@@ -1521,10 +1523,10 @@ Finally, let's modify our ```CharacterList``` component to render some ```Link``
 const CharacterListItem =
     props =>
         <li>
-            <Link to={`${props.location.pathname}${props.character.id}`}>
+            <Link to={`${props.location.pathname}/${props.character.id}`}>
                 {props.character.name}
             </Link>
-        </li>
+        </li>;
 ```
 
 This component will replace our current in-line list items. Note how we're taking advantage of the route information from the props to dynamically generate the ```Link``` target.
@@ -1556,7 +1558,7 @@ Recall when we defined the ```Route``` for ```/characters``` in ```appContainer.
 
 Because we require an exact match for ```/characters``` in ```AppContainer```, the router won't select the route when we provide the ```id``` value thus we never get directed to ```CharacterHome``` to discover that route. Let's remove ```exact``` from the ```/characters``` route and try our links again. We should now see a message stating the ```id``` of the character we clicked.
 
-This leaves us with some interesting problem as far as unmatched paths go. First, we've moved detection of unmatched routes from the application root to individual sections within the app. Next, we need to determine what constitutes a valid ```id``` within the context of ```characters```. For instance, ```/characters/1``` is a valid path but ```/characters/arya%20stark``` may or may not be. We need to take this into consideration when designing our routes.
+This leaves us with some interesting problems as far as unmatched paths go. First, we've moved detection of unmatched routes from the application root to individual sections within the app. Next, we need to determine what constitutes a valid ```id``` within the context of ```characters```. For instance, ```/characters/1``` is a valid path but ```/characters/arya%20stark``` may or may not be. We need to take this into consideration when designing our routes.
 
 We've established that our character ```id```s are integer based so how can we reflect that in our route? The answer lies in everyone's favorite subject: *regular expressions*.
 

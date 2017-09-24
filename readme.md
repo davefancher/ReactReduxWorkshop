@@ -1307,15 +1307,196 @@ Navigating to that URI still shows the character list because ```/characters``` 
 <Route path="/characters" exact component={CharacterList} />
 ```
 
-### React Router: Navigation 
+### React Router: Navigation
+
+Our application is really starting to feel like a real single-page application. We have several components, routing, and deep linking but so far we have no way to navigate around! How do we expect our users to get from page to page?
+
+In a traditional application we'd link directly to pages with ```A``` elements and while our deep-linking capabilities would certainly allow that, React Router offers a better way: ```Link``` components. Why might we prefer the ```Link``` components over traditional ```A``` elements?
+
+The primary reason to prefer the ```Link``` components is that we've already loaded the application! If we were to link directly to part of our application that would result in a new HTTP request to the application thus making us (typically) not only have to reload the application but also lose state! The ```Link``` components avoid this by working directly with the ```Router``` at our application root.
+
+Let's define a function component to represent a navbar. To make this feel like a navbar we'll be mixing some Bootstrap classes with some of our own which are already defined in ```site.scss```. (Feel free to place this in the ```appContainer.jsx``` file for convenience.)
+
+```javascript
+const NavBar =
+    props =>
+        <ul className="list-inline navMenu">
+            <li role="presentation">
+                <Link to="/">Home</Link>
+            </li>
+            <li role="presentation">
+                <Link to="/characters">Characters</Link>
+            </li>
+        </ul>
+```
+
+Here we have a function component which renders an unordered list with a few ```Link``` components. When rendered, each list item will be displayed as a tab which we can click to jump to different parts of the application.
+
+We still don't have the ```NavBar``` on the page so let's do that and while we're at it let's wrap the remaining content in another ```div``` to make it feel like tab content.
+
+```javascript
+<BrowserRouter>
+    <div>
+        <NavBar />
+        <div className="iceAndFireBody">
+            {/* snip */}
+        </div>
+    </div>
+</BrowserRouter>
+```
+
+Now when we view the page we should see some significant changes. Go ahead and click between the new tabs and observe how React toggles between the routes. For some added effect, open your browser's developer tools to the Network tab and observe that the only HTTP traffic is the character API request as opposed to entering the URIs directly into the address bar!
+
+One thing that's still missing here is a way to highlight the current tab. Bootstrap usually handles this automatically but we're only using Bootstrap styles and not its JavaScript capabilities because React doesn't play nicely with other libraries that manipulate the DOM. Another difference between how Bootstrap and React Router handle identifing the current tab is that Bootstrap would apply a CSS class to the ``li`` element whereas React Router wants to apply it to the underlying ```A``` element. (Yes, ```Link``` renders an ```A``` element but hooks up the appropriate event handlers for us.) So how do we identify the current tab?
+
+As always, we have a few options.
+
+The first option, which we'll avoid, is to create a new component which wraps the ```Link```. (There are a number of examples of this approach on the Web.) The alternative is far easier and meets our needs quite well.
+
+We can use React Router's ```NavLink``` component instead! ```NavLink``` is a specialized ```Link``` component which exposes a few additional props which we can leverage to highlight our selected tab.
+
+```javascript
+const NavBar =
+    props =>
+        <ul className="list-inline navMenu">
+            <li role="presentation">
+                <NavLink to="/"
+                         exact
+                         activeClassName="active">Home</NavLink>
+            </li>
+            <li role="presentation">
+                <NavLink to="/characters"
+                         activeClassName="active">Characters</NavLink>
+            </li>
+        </ul>
+```
+
+One of the really nice things about ```NavLink``` is that it follows some patterns that we're already familiar with: the ```exact``` prop, for instance, behaves as we saw with ```Switch```. The other prop we supply in our revised ```NavBar```, ```activeClassName```, indicates which CSS class should be applied to the underlying element when it's matched. In our case, we have an ```active``` class defined in ```site.scss`` which affects border, text color, and background color.
 
 ### React Router: Child Routes
 
+Most applications follow a pattern of presenting a list of data and linking to a detailed view of items in that list. For instance, a user list might show some basic information about each user while linking to more detailed information about individual users. We can follow that same pattern in React applications. In fact, we already mentioned we were going to when we discussed trying to traverse to routes such at ```/characters/20``` which would typically indicate a character with ID 20.
+
+We could simply add a new component and route to ```AppContainer.jsx``` and follow the established pattern there but in the interest of separating concerns and showing how React Router v4 dynamic routing works lets isolate the character-related pieces to a separate container component which we'll create in a new ```characters``` folder under ```containers```. We'll call this new container component ```characterHome.jsx```.
+
+```javascript
+export default class CharacterHome extends Component {
+    render () {
+        return null;
+    }
+}
+```
+
+> For simplicity here we're going to stay focused on implementing a child route and not worry about promoting code from the ```CharacterList``` component to the ```CharacterHome``` component.
+
+This pattern should look quite familiar by now. We create a class that extends ```Component``` and implement a ```render``` function. We know that we're going to render the ```CharacterList``` component at ```/characters``` and a yet-to-be-built ```CharacterDetail``` component at ```/characters/:id``` so that sounds like we need two routes. (Remember to ```import``` the appropriate types from the other modules!)
+
+```javascript
+export default class CharacterHome extends Component {
+    render () {
+        return (
+            <Switch>
+                <Route path="/characters" exact component={CharacterList} />
+                <Route path="/characters/:id" component={CharacterDetail} />
+            </Switch>
+        );
+    }
+}
+```
+
+Just as before, we defined routes that reflect the various parts of our application but now we're focused specifically on characters. 
+
+One of the interesting aspects of React Router's dynamic routing capabilities is that we actually don't need to be quite as specific as we have been with our route path definitions. As it currently stands we've locked this component into the ```/characters``` scheme by hard-coding those paths but by taking advantage of the fact that route props are given to our new ```CharacterHome``` we can make this a bit more flexible.
+
+```javascript
+<Switch>
+    <Route path={this.props.match.url} exact component={CharacterList} />
+    <Route path={`${this.props.match.url}/:id`} component={CharacterDetail} />
+</Switch>
+``` 
+
+By replacing the hard-coded paths with the matched URL we achieve the same result as what we had before except now we're allowing the dynamic routing to tell us where we are within the application. This frees us to change the base URI for this part of the application without having to change this component to reflect its new location.
+
+We haven't defined the ```CharacterDetail``` component yet so let's do that now:
+
+```javascript
+const CharacterDetail =
+    props =>
+        <div className="spacerTop">Details for character: {props.match.params.id}</div>
+```
+
+Let's now connect this new ```CharacterHome``` component to our ```AppContainer```. We can do this by replacing the ```CharacterList``` import and changing the ```component``` prop for the respective route in ```appContainer.jsx```.
+
+```javascript
+import CharacterHome from "../containers/characters/characterHome.jsx";
+```
+
+Finally, let's modify our ```CharacterList``` component to render some ```Link```s so we can see these new routes responding accordingly. Let's begin by creating a simple function component above our ```CharacterList```.
+
+```javascript
+const CharacterListItem =
+    props =>
+        <li>
+            <Link to={`${props.location.pathname}${props.character.id}`}>
+                {props.character.name}
+            </Link>
+        </li>
+```
+
+This component will replace our current in-line list items. Note how we're taking advantage of the route information from the props to dynamically generate the ```Link``` target.
+
+Now let's make the ```CharacterList``` render this component. We need to replace the current ```map``` result with the ```CharacterListItem``` as follows:
+
+```javascript
+{this.state.characters.map((c, ix) =>
+    <CharacterListItem
+        key={ix}
+        character={{ id: ix, name: c.name }}
+        {...this.props} />
+)}
+```
+
+There are a few new things going on here so let's look at them before we continue.
+
+First, we're consolidating a few values into a single prop by passing a new object for the ```character``` prop. This is perfectly acceptible here since our repository is only returning a name. Typically you could just pass the object from the repository rather than creating a new object.
+
+The second new thing is something is using the [spread operator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_operator) with ```this.props``` to allow all of the ```CharacterList``` props to flow down to each ```CharacterListItem```. This allows us to access useful route information such as the ```location``` from that component. Using the spread operator here is a bit on the questionable side since components should really only get the data they need but it was as good a place as any to show that it can be done.
+
+With that slight refactoring out of the way, let's return to the browser and follow one of the links.
+
+Uh oh! Instead of the ```CharacterDetail``` we're seeing the error message we defined back with our routing!
+
 ### React Router: Unmatched Paths (Revisited)
+
+Recall when we defined the ```Route``` for ```/characters``` in ```appContainer.jsx``` we included the ```exact``` prop. We did that because we didn't have the concept of a detail page yet so it was perfectly valid. Now we do have a detail page and it's at ```/characters/:id``` but that route is defined within the ```CharacterHome``` component.
+
+Because we require an exact match for ```/characters``` in ```AppContainer```, the router won't select the route when we provide the ```id``` value thus we never get directed to ```CharacterHome``` to discover that route. Let's remove ```exact``` from the ```/characters``` route and try our links again. We should now see a message stating the ```id``` of the character we clicked.
+
+This leaves us with some interesting problem as far as unmatched paths go. First, we've moved detection of unmatched routes from the application root to individual sections within the app. Next, we need to determine what constitutes a valid ```id``` within the context of ```characters```. For instance, ```/characters/1``` is a valid path but ```/characters/arya%20stark``` may or may not be. We need to take this into consideration when designing our routes.
+
+We've established that our character ```id```s are integer based so how can we reflect that in our route? The answer lies in everyone's favorite subject: *regular expressions*.
+
+Route paths can be augmented with regular expressions to further control their format. In our case we want to ensure that the character ```id``` is at least one digit long so we can tweak the path as follows:
+
+```javascript
+<Route path={`${this.props.match.url}/:id(\\d+)`} component={CharacterDetail} />
+```
+
+In fact, route detection is built upon the [```path-to-regexp``` package](https://www.npmjs.com/package/path-to-regexp) so anything that package can handle is a valid path as far as React Router is concerned.
+
+Because we've moved unmatched route detection from the ```AppContainer``` and it's now possible to enter an invalid character ```id``` we should implement an unmatched path route in ```CharacterHome```. Despite the lack of a "global" detection mechanism the ability to have more granular control over the detection is a positive thing.
+
+```javascript
+<Route render={() => <div className="alert alert-danger spacerTop">Invalid character path</div>} />
+```
+
+Let's go back to the application one more time and try a few different URIs to see our route revisions in action.
 
 <hr />
 
-## Part 8: Redux
+## Part 8: Introducing Redux
+
+***Coming Soon***
 
 <hr />
 

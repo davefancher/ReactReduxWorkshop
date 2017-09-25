@@ -1582,9 +1582,279 @@ Let's go back to the application one more time and try a few different URIs to s
 
 ## Module 8: Introducing Redux
 
-***Coming Soon***
+As we've seen throughout the exercises in this workshop, state management is an important concept in React applications. For small apps, React's built-in state management is often sufficient but as applications grow, complexity grows with it which often leads to dependency tree entanglements and other maintenance nightmares. Further complicating the issue is that since in "vanilla" React applications, components are responsible for managing their own state which can make it difficult for us to get a complete view of an application's current state within the browser. This is where Redux comes in.
 
-## Module 9: Adding Redux
+Redux is a powerful state-management library that, while separate from React, fits very well with the React development model. It builds upon Facebook's [Flux](http://facebook.github.io/flux/) architecture but also borrows concepts and patterns from another popular front-end framework - [Elm](http://elm-lang.org/).
+
+### Redux Architecture
+
+We've already seen that it's entirely possible to build React apps without Redux but Redux definitely makes it easier by providing a simple interface and centralized store for our application's state. (Likewise, it's possible to use Redux without React!) Redux does more than that, though. Redux is an architectural pattern as much as it is a library in that asks us to make some architectural decisions that may seem counterintuitive at first (particularly in Web development) but ultimately lead to a better overall application architecture. Each of these guidelines will be familiar to developers with a background in functional programming.
+
+First, Redux wants us to describe our state in terms of plain objects and arrays rather than complex objects with associated behavior. This keeps our state simple.
+
+Next, Redux wants us to describe changes to the state as plain objects which typically resemble but are separate from our state object. This forces us to think of our interactions as independent actions (or commands for those familiar with CQRS) and what data is associated with those actions while still remaining detached from behavior.
+
+Redux also wants us to express state changes as pure functions, that is, functions without side-effects. This tends to confuse people new to functional programming since the end goal of any software project is to have some effect but by not depending on or affecting external state, functions become deterministic and thus easier to reason about and predict. Ultimately, updates to the central Redux store will be performed in a controlled and predictable manner.
+
+Finally, like React, Redux is unidirectional; data flows in one direction through a series of operations just like a functional pipeline.
+
+### Redux Interactions
+
+Redux functionality is divided into three main categories:
+
+<dl>
+    <dt>Actions</dt>
+    <dd>Actions are used to send data to the store. They are represented as plain JavaScript objects and must have a ```type``` property to identify which operation they represent.</dd>
+    <dt>Reducers</dt>
+    <dd>Reducers describe how the application state changes in response to an action. What that response will be is determined by the action's ```type```. Reducers are often composed to handle state changes across different parts of the application.</dd>
+    <dt>Stores</dt>
+    <dd>Stores hold the current application state and manage changes to that state. Applications will have only one store.</dd>
+</dl>
+
+Although there are a few other ways to control how Redux behaves these three pieces (along with the package references, of course) are all that's truly required to get Redux up and running within your application.
+
+Since there isn't really that much to getting started with Redux let's begin adding it to our application. We have a great candidate for our first piece of Redux functionality and that's our ```LoginForm```.
+
+### Installing Redux
+
+Before we do anything with Redux in our application we need to add a few more packages to our project.
+
+```bash
+npm install redux react-redux --save
+```
+
+These packages define both Redux and some integration hooks to make React and Redux work together.
+
+With these in place we can now start defining our actions, reducers and store. It's true that both actions and reducers require a store to work but the store needs to know about the reducers and reducers need to know about actions so we'll begin by defining some actions. 
+
+### Defining Actions
+
+Actions are how we interact with Redux. They describe what is happening within the system. The terminology here can be a bit confusing because actions typically represent something that has happened, much like an event. Thinking of them as events or possibly even commands can be more convenient.
+
+We're going to hand off state management for our ```LoginForm``` operations to Redux. One big reason for doing this is that currently all of our login state is contained within ```LoginForm```. I can think of plenty of reasons that this state should be "promoted" to the application level not the least of which being to share user information with other components!
+
+In designing our Redux integration we need to think about the ways we'll be interacting with the store. In other words, what type of things (actions) would a user take with the ```LoginForm```? Our current design gives us a pretty good indication:
+
+* ```handleLogin```
+* ```handleLogoff```
+
+These functions both seem like things a user would want to do so lets design our first actions around those. We'll begin by creating a new ```actions``` folder under ```dev```. We can then create a new file named ```authentication.js``` in the ```actions``` folder.
+
+At first glance it might seem like we need only two actions but further inspection of the ```handleLogin``` function reveals that we need to handle both success and failure cases so we're actually going to define three actions.
+
+As we'll see over the next few sections, much of the code we'll write for our Redux integration is largely convention-based. There are only a few things that we actually need to do to make Redux work.
+
+One convention is to define constants or variables to hold the various action names so we can reference them without magic strings in both the action and reducer definitions. Grouping these into an object is also acceptible and helps keep the names organized as the application grows.
+
+Let's start creating our authentication actions by defining their names:
+
+```javascript
+export const AUTH = {
+    "LOG_IN_SUCCESS": "AUTH.LOG_IN_SUCCESS",
+    "LOG_IN_FAILURE": "AUTH.LOG_IN_FAILURE",
+    "LOG_OUT": "AUTH.LOG_OUT"
+};
+```
+
+We can now refer to these names via ```AUTH.LOG_IN_SUCCESS```, ```AUTH.LOG_IN_FAILURE```, and ```AUTH.LOG_OUT``` where ever they're needed.
+
+Now that we know which actions the store is going to respond to we need to think about the data associated with each. For instance, a successful login will need the user's username (represented as an email address) whereas a failure should have an associated error message.
+
+The actions themselves are represented as plain JavaScript objects which we could technically create anywhere but the Redux convention has us encapsulate the object creation within factory functions called *action creators* to ensure that the action object's shape is consistent.
+
+Here are the creators for our three actions:
+
+```javascript
+const loginSuccess =
+    username => ({
+        type: AUTH.LOG_IN_SUCCESS,
+        username: username
+    });
+
+const loginFailure =
+    validationError => ({
+        type: AUTH.LOG_IN_FAILURE,
+        validationError: validationError
+    });
+
+const logOut =
+    () => ({
+        type: AUTH.LOG_OUT
+    });
+```
+
+That's it! We now have our initial action creators in place so we can now move on to the reducers.
+
+### Defining Reducers
+
+Reducers are responsible for computing the new state based on actions received from the Redux store dispatcher. Like the action creators, reducers are generally rather straightforward and are largely convention-based but there are a few important details to keep in mind which we'll cover as we encounter them.
+
+Following the typical folder convention we'll create a folder called ```reducers``` under ```dev``` and under that we'll create a new file called ```authentication.js```. Once that file is created, import the ```AUTH``` object from the file created in the previous section since those type names are going to be pretty important in just a moment.
+
+```javascript
+import { AUTH } from "../actions/authentication.js";
+```
+
+Now we can begin defining our reducer which, despite its fancy name, is fundamentally little more than a switch statement!
+
+```javascript
+export default function AuthReducer (state, action) {
+    switch(action.type) {
+        case AUTH.LOG_IN_SUCCESS:
+            return state;
+
+        case AUTH.LOG_IN_FAILURE:
+            return state;
+        
+        case AUTH.LOG_OUT:
+            return state;
+    }
+
+    return state;
+}
+```
+
+The ```AuthReducer``` function accepts both the current state from the store an the action being applied to the store. It then switches against that required ```type``` property to determine how to apply the action to the store, computes the *new* state and finally returns that *new* state.
+
+Note that the reducer computes and returns a *new* state rather than modifying the supplied state. Understanding this distinction is *critical* for working successfully with Redux. In fact, reducers should be *pure functions* and *never* mutate arguments or induce side-effects which can alter the application state.
+
+It's also important for reducers to return the current state if no action applies. This allows the state to flow to other reducers.
+
+So far our reducer isn't actually changing the application state as it simply returns the supplied state so let's build out each action handler.
+
+```javascript
+export default function AuthReducer (state, action) {
+    switch(action.type) {
+        case AUTH.LOG_IN_SUCCESS:
+            return {
+                ...state,
+                username: action.username,
+                validationError: null
+            };
+
+        case AUTH.LOG_IN_FAILURE:
+            return {
+                ...state,
+                username: null,
+                validationError: action.validationError
+            };
+        
+        case AUTH.LOG_OUT:
+            return {
+                ...state,
+                username: null,
+                validationError: null
+            };
+    }
+
+    return state;
+}
+```
+
+The code in each action branch simply takes creates a new object based upon the current state (via the spread operator) and sets the ```username``` and ```validationError``` properties as appropriate for the respective action type. In general, this pattern will apply to most reducers you'll write.
+
+Although we've largely completed our first reducer it's still missing one key piece of information: what the initial state looks like. We know based on what we've written that our state should have the ```username``` and ```validationError``` values but how do those get populated initially such as when the application is being loaded?
+
+The easiest thing to do is to give the ```state``` parameter a default value, like this:
+
+```javascript
+const INITIAL_STATE = {
+    validationError: null,
+    username: localStorage.getItem("username")
+};
+
+export default function AuthReducer (state = INITIAL_STATE, action) {
+    // snip
+}
+```
+
+If the ```INITIAL_STATE``` value looks familiar, it's because it was copied directly from the ```LoginForm``` constructor. This highlights how well React and Redux work together. Just because we're using a different state management system doesn't mean we have to change how we represent that state.
+
+### Defining the Store
+
+At this point we've defined three actions and a reducer. Now we need to define a store to orchestrate the interactions between the actions and reducer as well as manage the current state.
+
+A Redux store is simply an object with some functions attached to it to wire-up mappings between actions and reducers. As such, to create a store all we need to do is invoke the ```createStore``` function from the Redux package, passing along a reducer.
+
+We'll create our store at the outermost layer of the application: ```index.jsx```.
+
+```javascript
+const store = createStore(AuthReducer);
+```
+
+If this weren't a React application we'd be good-to-go with using Redux but React doesn't automatically know about Redux so we'll connect the two in the next section.
+
+### Connecting Redux to React
+
+Despite the presence of actions, a reducer, and a store within the application, React still needs to be instructed to use Redux but it is a bit of a multi-step process. Let's begin by telling React to use the store we defined in the previous section. To do that we need to wrap our ```AppContainer``` component in a ```Provider``` component provided by ```react-redux```.
+
+```javascript
+ReactDOM.render(
+    <Provider store={store}>
+        <AppContainer />
+    </Provider>,
+    document.querySelector("#container")
+);
+``` 
+
+Pretty simple, right? While this makes React aware of the store, it doesn't tell it how to propagate the state to the rest of the application. To do that, we need to make some changes to our ```LoginForm``` component.
+
+First, let's stop exporting the class and rename it from ```LoginForm``` to ```LoginFormImpl```. (The actual name here doesn't particularly matter; we're renaming it to wrap it later and return a new ```LoginForm``` component.)
+
+```javascript
+export class LoginFormImpl extends Component {
+    // snip
+}
+```
+
+Now we can begin the process of making this component interact with Redux. This involves defining a function called ```mapStateToProps``` to handle extracting values from the store and sending them to the component as props, defining a function called ```mapDispatchToProps``` to allow us to pass functions which dispatch the actions to the store, then finally wiring it all up with the ```connect``` function.
+
+The ```mapStateToProps``` function simply needs to create a new object with only those values that the ```LoginFormImpl``` component cares about.
+
+```javascript
+const mapStateToProps =
+    state => ({
+        username: state.username,
+        validationError: state.validationError
+    });
+```
+
+Right now all our store contains is our login information but as we bring more data into the Redux store, it'll be increasingly important to allow only those values that components care about to propagate down to prevent unnecessary re-renderings.
+
+Next up is the ```mapDispatchToProps``` function. Again, this is responsible for creating function props that know how to send actions to the store via the ```dispatch``` function which is the only way to send actions to the store.
+
+```javascript
+const mapDispatchToProps =
+    dispatch => ({
+        dispatchLoginSuccess: username => dispatch(loginSuccess(username)),
+        dispatchLoginFailure: errorMessage => dispatch(loginFailure(errorMessage)),
+        dispatchLogoff: () => dispatch(logoff())
+    });
+```
+
+Finally, let's wrap ```LoginFormImpl``` with the ```connect``` function and export the result.
+
+```javascript
+const LoginForm = connect(mapStateToProps, mapDispatchToProps)(LoginFormImpl);
+
+export default LoginForm;
+```
+
+Of note here is that ```connect``` is a higher-order function which accepts the various mapping functions and returns a new function which accepts the component to wrap. This can be a bit confusing if you haven't followed this pattern before in other code but it allows us to create a closure for common arguments and wrap multiple components.
+
+Finally, because Redux is handling our state, we can remove everything related to React's state management and replace it with the newly mapped props.
+
+First, remove the initial, default state from the constructor. Do you remember where that's being initialized now?
+
+Next, replace the calls to ```this.setState``` in ```handleLogin``` and ```handleLogoff``` with the corresponding functions we mapped in ```mapDispatchToProps```.
+
+Finally, replace each remaining instance of ```this.state``` with ```this.props```. Because we kept the same names for our Redux-managed state we shouldn't have to worry about any additional changes to our login component.
+
+### Verifying Redux
+
+***Coming Soon!***
+
+## Module 9: Router Composition and Asynchronous Actions
 
 ***Coming Soon***
 
@@ -1601,6 +1871,7 @@ Let's go back to the application one more time and try a few different URIs to s
 * [React createClass vs Component](https://toddmotto.com/react-create-class-versus-component/)
 * [Controlled vs Uncontrolled Inputs](https://goshakkk.name/controlled-vs-uncontrolled-inputs-react/)
 * [React's Component Lifecycles](https://medium.com/mofed/reacts-component-lifecycles-adf0ebc89d23)
+* [You Might Not Need Redux](https://medium.com/@dan_abramov/you-might-not-need-redux-be46360cf367)
 
 <hr />
 

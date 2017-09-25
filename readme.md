@@ -10,6 +10,7 @@
 
 * Install [node/npm](https://nodejs.org/en/download/) - get latest recommended version
 * Install [React Developer Tools](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi) extension
+* Install [Redux DevTools Extension](https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd)
 * Clone the samples repository for easy access to workshop materials
 
 <hr />
@@ -1850,9 +1851,13 @@ Next, replace the calls to ```this.setState``` in ```handleLogin``` and ```handl
 
 Finally, replace each remaining instance of ```this.state``` with ```this.props```. Because we kept the same names for our Redux-managed state we shouldn't have to worry about any additional changes to our login component.
 
+> Extending this concept to its extreme, we could move the logic that's in the ```handleLogin``` and ```handleLogoff``` functions into the action creators and convert ```LoginFormImpl``` to a functional presentation component but that seems like a good opportunity for self-study.
+
 ### Verifying Redux
 
-***Coming Soon!***
+Redux is now handling all of the state management for ```LoginForm```. How do we know this (aside from that we just wrote it)? The easiest way is to sprinkle some breakpoints throughout the various Redux integration points and observe the code executing within the console but there's a much more interesting way - the [Redux DevTools](https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd).
+
+The Redux DevTools give us some incredible insights into what's going on in Redux. First, it gives us a log of actions and resulting state, and it gives a chart showing breaking down the current state. What's more is that the Redux DevTools offer a "time-traveling" mechanism which allows us to jump back and forth between previous actions and observe how the React UI changes!
 
 ## Module 9: Router Composition and Asynchronous Actions
 

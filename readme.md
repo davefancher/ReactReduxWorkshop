@@ -42,7 +42,7 @@ And ends up looking like this when rendered (more on rendering in a future secti
 
 If state or some kind of data is passed to another component, it is called props and is read only. If we take the previous example and move the buttons into a child component, we can pass any functions or data we need to the child using props:
 
-```js
+```javascript
 // ButtonHolder.js
 import React from 'react';
 
@@ -60,7 +60,7 @@ const ButtonHolder = (props) => {
 export default ButtonHolder;
 ```
 
-```js
+```javascript
 // App.js
 import React, { Component } from 'react';
 import ButtonHolder from './ButtonHolder';
@@ -172,7 +172,7 @@ Similarly, Webpack uses the ```webpack.config.js``` file to identify not only wh
 
 ### Creating the Basic Application Structure
 
-If you look at the ```webpack.config.js`` file you'll see a few specific paths referred to throughout the file. These paths describe the compilation entry point as well as the output destination. Let's create the structure that Webpack is expecting to find. (Note that Webpack will automatically create the destination files and folders.)
+If you look at the ```webpack.config.js``` file you'll see a few specific paths referred to throughout the file. These paths describe the compilation entry point as well as the output destination. Let's create the structure that Webpack is expecting to find. (Note that Webpack will automatically create the destination files and folders.)
 
 We'll start with the ```dev``` folder which will contain our JavaScript and SASS code.
 
@@ -186,7 +186,7 @@ Finally, let's add the ```index.jsx``` and ```site.scss``` files to the ```dev``
 
 ### Configuring Build and Start Scripts
 
-The last step before we can start building our React application is to configure some build and start scripts that tell node what to do when ```npm build``` or ```npm start``` are executed. To do so, open the ```package.json``` file and add the following two lines to the ```scripts``` node:
+The last step before we can start building our React application is to configure some build and start scripts that tell node what to do when ```npm build``` or ```npm start``` is executed. To do so, open the ```package.json``` file and add the following two lines to the ```scripts``` node:
 
 ```javascript
 "build": "webpack --config ./webpack.prod.config.js --progress --colors",
@@ -209,7 +209,7 @@ Congratulations! Your app is now configured!
 
 ## Module 3: My First React Project: Hello World
 
-In the last section we built created our workspace and imported all the necessary components to build a simple React application but we haven't actually started using React yet since all we're serving up is some HTML.
+In the last section we built our workspace and imported all the necessary components to build a simple React application but we haven't actually started using React yet since all we're serving up is some HTML.
 
 In this section we'll begin gradually building out the application we previewed at the beginning of the last section.
 
@@ -258,7 +258,7 @@ ReactDOM.render(
 
 ```ReactDOM.render``` accepts two arguments:
 1. The component to render
-2. A reference to the element where the component will be rendered.
+2. A reference to the element where the component will be rendered. By using ```document.querySelector``` we're able to select an element in our HTML document by CSS selector. The way we're using ```document.querySelector``` here is functionally equivalent to using ```document.getElementById```.
 
 Now save the file and observe the change within your browser window. Provided that the ```react-hot-loader``` package is installed and configured correctly within webpack you should see this change reflected automatically.
 
@@ -421,7 +421,7 @@ Each of the three phases provides one or more function hooks we can define in ou
 
 #### Mounting
 
-Mounting occurs when a component is being created and ultimately added to the DOM. We can tie in to the mounting process at any of four places by defining methods on our component class:
+Mounting occurs when a component is being created and ultimately added to the DOM. We can hook into the mounting process at any of four places by defining methods on our component class:
 
 <dl>
     <dt>Component constructor</dt>
@@ -480,7 +480,7 @@ Before we go any further let's take a moment to talk about what state means in R
 
 ### State in React
 
-Until now we've been tossing around the term "state" pretty frequently but we haven't really talked about what it means in a React app. Much like props, React state helps determine how a component will render. Unlike props, though, React state is private to a component but it can be updated in response to events. Furthermore, although state it private to an individual component, it can be passed to child components as props! This is another key aspect of React's compositional nature.
+Until now we've been tossing around the term "state" pretty frequently but we haven't really talked about what it means in a React app. Much like props, React state helps determine how a component will render. Unlike props, though, React state is private to a component but it can be updated in response to events. Furthermore, although state is private to an individual component, it can be passed to child components as props! This is another key aspect of React's compositional nature.
 
 Let's continue building out our ```LoginForm``` component with this in mind. Along the way we'll circle back to this discussion with some special concerns around managing a component's state.
 
@@ -516,7 +516,7 @@ handleLogin(e) {
 
 > *Although event handlers follow a familiar pattern in React they do behave a bit differently. One important difference is that the event passed to the handler isn't a native browser event but is rather a React supplied type called [SyntheticEvent](https://facebook.github.io/react/docs/events.html) which aims to standardize events across browsers. We won't spend time discussing them much here but should you so desire to learn more you can follow the link above.*
 
-The handleLogin event handler is rather straightforward. It simply reads the username and password values from their respective input fields and ensures that they have been supplied. If we have both we persist the user name to local storage and update the component state to reflect the credentials otherwise we update the component state to reflect an error condition.
+The handleLogin event handler is rather straightforward. It simply reads the username and password values from their respective input fields and ensures that they have been supplied. If we have both, we persist the user name to local storage and update the component state to reflect the credentials otherwise, we update the component state to reflect an error condition.
 
 Now save your file, jump over to the browser, open the developer console, and try it out. Provided that you haven't jumped ahead in these exercises you'll quickly discover that clicking the "Log in" button results in an error stating that we can't read property ```setState``` of ```null```.
 
@@ -632,7 +632,7 @@ handleLogin(e) {
 }
 ```
 
-As you can see, this approach simplifies how we can get data from our form elements and even gives us the opportunity to change the underlying elements with minimal impact to the rest of the code. React refers to this approach as "uncontrolled" because we're working with the form elements in a more traditional manner without tapping into React's lifecycle. The downside of using uncontrolled input is that we lose th e ability to react to changes in those controls. For simple forms such as our login form, the uncontrolled approach is ideal but we'll look at a more "React-y" way of managing forms a bit later. 
+As you can see, this approach simplifies how we can get data from our form elements and even gives us the opportunity to change the underlying elements with minimal impact to the rest of the code. React refers to this approach as "uncontrolled" because we're working with the form elements in a more traditional manner without tapping into React's lifecycle. The downside of using uncontrolled input is that we lose the ability to react to changes in those controls. For simple forms such as our login form, the uncontrolled approach is ideal but we'll look at a more "React-y" way of managing forms a bit later. 
 
 ### Managing Login: Conditional Rendering
 
@@ -914,7 +914,7 @@ One separation that tends to naturally fall out of dividing the application into
 
 <dl>
     <dt>Container Components</dt>
-    <dd>Container components are responsible for managing data and responding to state changes. They still provide the required ```render``` function but only to return another component.</dd>
+    <dd>Container components are responsible for managing data and responding to state changes. They still provide the required render function but only to return another component.</dd>
     <dt>Presentation Components</dt>
     <dd>Presentation components are concerned what's actually being rendered based on the props supplied by a container component. These components generally have very little logic associated with them and as such are often defined as function components.</dd>
 </dl>
@@ -1000,7 +1000,7 @@ For our purposes in the workshop we're going to use the [axios](https://www.npmj
 
 We can install axios by running the following terminal command:
 
-```
+```bash
 npm install axios --save
 ```
 
@@ -1109,7 +1109,7 @@ Now add the component to the page in ```index.jsx``` and go to the browser. The 
 
 Because we didn't have much interesting to look at when we examined our ```LoginForm```'s state, let's repeat that exercise with our slowly growing page.
 
-This page now consists of several layers of components and elements. When the page loads the React Developer Tools will now allow us to drill into the overall structure starting at the top level: the ```AppContainer```. By default this node is selected and we the tools correctly report that there are no props, or, more specifically, that the props are an empty object. Let's drill into the child components by expanding the ```AppContainer``` element.
+This page now consists of several layers of components and elements. When the page loads, the React Developer Tools will now allow us to drill into the overall structure starting at the top level: the ```AppContainer```. By default this node is selected and the tools report that there are no props, or, more specifically, that the props are an empty object. Let's drill into the child components by expanding the ```AppContainer``` element.
 
 If we select the ```LoginForm``` element we'll see the same state values we observed before. If you're logged in you'll see the ```username``` set otherwise you'll see ```null``` for that value.
 
@@ -1236,7 +1236,7 @@ Now that we know a bit about the router it's time to add it to our application.
 
 We install React Router like any other npm package.
 
-```
+```bash
 npm install react-router-dom --save
 ```
 
@@ -1246,7 +1246,7 @@ Once the package has been installed we can import it into our app. But where?
 
 ### React Router: Adding a Router
 
-Recall from before we added axios we split a container component called ```AppContainer``` away from ```index.jsx```. This component is intended to serve as the wrapper for our entire application and Routers are typically defined at the application root, this seems like a natural place.
+Recall from before we added axios that we split a container component called ```AppContainer``` away from ```index.jsx```. This component is intended to serve as the wrapper for our entire application and Routers are typically defined at the application root, this seems like a natural place.
 
 Add the following ```import``` directive to ```appContainer.jsx```:
 

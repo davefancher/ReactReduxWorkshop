@@ -105,7 +105,7 @@ Throughout the workshop we'll gradually build out an application that allows us 
 
 *Demo: The finished app*
 
-The initial setup for a React application can be a bit tedious but it's important to see how the various packages interact to make our application work. There are some tools such as ```create-react-app``` to automate some of this but since it's only necessary once per project we'll take the time to walk through the process today.
+The initial setup for a React application can be a bit tedious but it's important to see how the various packages interact to make our application work. There are some tools such as ```create-react-app``` to automate some of this but since it's only necessary once per project we'll take the time to walk through the process today. For more information, see [Appendix C](#appendix-c-create-react-app).
 
 ### Initialize a repository
 
@@ -2115,14 +2115,6 @@ We can mandate the use of typechecking - or simply use a warning - in our eslint
 "react/no-unused-prop-types": "warn", // "error" or "off"
 ```
 
-## create-react-app
-
-Create React App was a tool made by Facebook in response to complaints of how complicated it was to get started building applications with React. It works by globally installing `npm install -g create-react-app` and then running the `create-react-app my-app` command. This will take care of all tooling and setup so you can start building React Components right away.
-
-create-react-app can a good solution for testing and learning purposes but there are some considerations to be made if you want to build production applications with this tool. It makes quite a few assumptions about the structure and needs of your application - although you can run an `eject` command to be able to configure the tooling as you want.
-
-For more information, check out [the github repo](https://github.com/facebookincubator/create-react-app).
-
 <hr />
 
 ## Appendix A: Resources
@@ -2148,3 +2140,13 @@ For more information, check out [the github repo](https://github.com/facebookinc
 
 * [Facebook](https://facebook.github.io/react/tutorial/tutorial.html)
 * [Kirupa](https://www.kirupa.com/react/)
+
+<hr />
+
+## Appendix C: Create React App
+
+Create React App was a tool made by Facebook in response to complaints of how complicated it was to get started building applications with React. It works by globally installing `npm install -g create-react-app` and then running the `create-react-app my-app` command. This will take care of all tooling and setup so you can start building React Components right away.
+
+create-react-app can a good solution for testing and learning purposes but there are some considerations to be made if you want to build production applications with this tool. It makes quite a few assumptions about the structure and needs of your application - although you can run an `eject` command to be able to configure the tooling as you want.
+
+For more information, check out [the github repo](https://github.com/facebookincubator/create-react-app).

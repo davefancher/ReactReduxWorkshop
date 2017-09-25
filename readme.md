@@ -1948,6 +1948,8 @@ That's basically the idea of HOCs. Now any component can be passed into the func
 
 ## Testing Basics with Jest
 
+> Jest is used by Facebook to test all JavaScript code including React applications. One of Jest's philosophies is to provide an integrated "zero-configuration" experience. We observed that when engineers are provided with ready-to-use tools, they end up writing more tests, which in turn results in more stable and healthy code bases. --*Facebook*
+
 Unit testing is important to ensure the continued functionality and reusability of our components. Jest is a full-featured testing framework that comes with an assertion library built in.
 
 The only command you need to install Jest and start writing tests is:

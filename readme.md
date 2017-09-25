@@ -1859,6 +1859,17 @@ Redux is now handling all of the state management for ```LoginForm```. How do we
 
 The Redux DevTools give us some incredible insights into what's going on in Redux. First, it gives us a log of actions and resulting state, and it gives a chart showing breaking down the current state. What's more is that the Redux DevTools offer a "time-traveling" mechanism which allows us to jump back and forth between previous actions and observe how the React UI changes!
 
+Unlike many other browser extensions, actually using the Redux DevTools extensions isn't simply a matter of installing them; we need our store to opt-in to using them. Fortunately, that just means passing the result of a function call to our store.
+
+```javascript
+const store = createStore(
+    AuthReducer,
+    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+);
+```
+
+This pattern is pretty typical JavaScript. If we have a function named ```__REDUX_DEVTOOLS_EXTENSION__``` attached to the ```window``` object, we execute it. Now save the file and play around with the DevTools for a bit because they're actually pretty amazing. (You may need to force-refresh the page for this particular change to take effect).
+
 ## Module 9: Router Composition and Asynchronous Actions
 
 ***Coming Soon***

@@ -1874,6 +1874,253 @@ This pattern is pretty typical JavaScript. If we have a function named ```__REDU
 
 ***Coming Soon***
 
+## Higher Order Component Module
+
+Higher order components (HOCs), take one or more React components as arguments and return an enhanced component. A common example of this is for checking that a user is authenticated before being allowed to go to certain routes.
+
+In our example App, we have a LoginForm component that either returns a form to allow the user to login:
+
+```js
+<div className="form-inline">
+    <div className="form-group">
+        <label htmlFor="username">User Name:</label>
+        <input
+            type="text"
+            className="form-control"
+            placeholder="Email Address"
+            ref={element => this.username = element} />
+    </div>
+    <div className="form-group">
+        <label htmlFor="password">Password: </label>
+        <input
+            type="password"
+            className="form-control"
+            ref={element => this.password = element} />
+    </div>
+    <button className="btn btn-default" onClick={this.handleLogin}>Log in</button>
+</div>
+```
+
+Or a welcome message if the user is already logged in:
+
+```js
+<div>
+    Hello, {this.state.username}! <a href="#" onClick={this.handleLogoff} style={buttonStyle}>Log Off</a>
+</div>
+```
+
+Right now, the rest of the app works exactly the same whether or not the user is logged in. Let's add an authentication check that a user is logged in before they can access the `/characters` route.
+
+Since we are using localStorage to store login credentials right now, we can retrieve the username from there to check whether or not they are logged in: `localStorage.getItem("username");`.
+
+The only left to do would be to re-route the user if they try to navigate to an authenticated route. Since most apps will have multiple routes where they have to check for authentication, it makes sense to make this functionality a separate and re-useable component. Basically, we need a function that takes in any component we pass it, enhances the component by adding authentication checks and re-routing, and then returns a new component.
+
+```js
+export default function(AuthComponent) {
+    class IsAuthenticated extends Component {
+        componentWillMount() {
+            const authenticated = localStorage.getItem("username");
+            if (!authenticated) {
+                // re-route the user
+            }
+        }
+
+        render() {
+            return <AuthComponent {...this.props} />
+        }
+    }
+
+    return IsAuthenticated;
+}
+```
+
+That's basically the idea of HOCs. Now any component can be passed into the function as `AuthComponent` so we can use this as a wrapper directly in our router: 
+
+```js
+<Switch>
+    <Route exact path="/" component={Home} />
+    <Route path="/characters" component={AuthWrapper(CharacterHome)} />
+</Switch>
+```
+
+*A Note about `react-router`. In order to get access to `this.props.router`, a component must be wrapped with `withRouter` (an HOC from react-router). Once wrapped, the component can dynamically route: `this.context.router.history.push('/');` and perform actions with routes like `push`, `pop`, `replace`, etc.
+
+
+## Testing Basics with Jest
+
+Unit testing is important to ensure the continued functionality and reusability of our components. Jest is a full-featured testing framework that comes with an assertion library built in.
+
+The only command you need to install Jest and start writing tests is:
+
+```js
+npm install --save-dev jest
+```
+
+Then, in the `package.json` file, add a test command:
+
+```js
+"scripts": {
+    "test": "jest"
+},
+```
+
+Now, all of our unit tests can be run with `npm test`. Jest automatically finds and runs any tests that are in a `__tests__` folder or in a file with a `.test.js` extension.
+
+### Test Driven Development
+
+Test Driven Development (TDD) is the practice of writing tests first before the application code is written. The idea is to write a test that will fail and then write the code to make that test pass and then keep repeating that process.
+
+A simple example - We need a function that will be able to sum two numbers, a and b, so we first write the test for that function:
+
+```js
+// app.test.js
+test('sum function adds two numbers', () => {
+  const result = sum(3, 2);
+  expect(result).toBe(5);
+});
+```
+
+Of course, if the test suite is run now it will fail because the application code hasn't yet been written.
+Since we have the test depicting what the function should do, we can go ahead and write the sum function:
+
+```js
+// app.js
+export const sum = (a, b) => {
+  return a + b;
+};
+```
+
+Now the test passes and we can proceed writing the next test.
+Of course these examples aren't really practical. Let's get into the ways we can test our React application we are building.
+
+
+## Testing React and Redux
+
+### Testing React Components
+
+The first and most basic test for React Components is checking whether or not a component renders correctly. To help with rendering, there is a library called `enzyme` with a lot of helper functions for testing React applications.
+
+```js
+npm install --save-dev enzyme
+```
+
+To test that components render, there are two basic methods we can use, full DOM rendering and shallow rendering. Shallow rendering just renders the component, not any child components, so that will work for this test. To mimic a component rendering to the screen without having an actual DOM, we can use the `shallow` function from enzyme.
+
+```js
+const component = shallow(
+    <App />
+);
+```
+
+This would normally make the component render just fine for the test. However, since the App component is wrapped in Redux, we will get an error when trying to render the component by itself. To make this work, we will have to wrap the component in the Redux Provider as well as pass in our application store.
+
+```js
+import { shallow } from 'enzyme'
+import { Provider } from 'react-redux'
+import { store } from '../src/store/store'
+
+test('App.js renders correctly', () => {
+    const component = shallow(
+        <Provider store={store}>
+            <App />
+        </Provider>
+    );
+})
+```
+
+Now that the App.js component is rendering in the test suite, we can take a snapshot of it and make sure that it doesn't unexpectadly change on us in the future. A snapshot will just record it's the exact state of the rendered component and let us know if the component changes in the future. If it does change, Jest lets us know when we re-run the test suite and give us some option to keep the current state, compare states, or revert the component back to how we had it.
+
+```js
+expect(component).toMatchSnapshot();
+```
+
+### Testing Redux Actions
+
+Testing actions is usually straight forward as they are simple functions. Just like any other test, we have to call a function and make an assertion about what should be returned. We can hard code the action we expect and then assert that the actions generator matches up using the `.toEqual()` function.
+
+```js
+test('action should match fetchCharactersRequest', () => {
+    const action = fetchCharactersRequest();
+    expect(action).toEqual({ type: FETCH_CHARACTERS.REQUEST });
+});
+```
+
+Now that test passes. We can also test that the helper function works correctly using the same method. We expect that is will create a request type object with REQUEST, SUCCESS, and FAILURE keys.
+
+```js
+test('request type is set correctly', () => {
+  const dummyTypes = {
+    REQUEST: 'FETCH_SINGLE_CHARACTER_REQUEST',
+    SUCCESS: 'FETCH_SINGLE_CHARACTER_SUCCESS',
+    FAILURE: 'FETCH_SINGLE_CHARACTER_FAILURE'
+  };
+  const newRequestType = createRequestTypes("FETCH_SINGLE_CHARACTER");
+  expect(newRequestType).toEqual(dummyTypes);
+});
+```
+
+### Testing Redux Reducers
+
+For reducers, we can test that when certain actions are fired off, that the state is updated correctly. To initialize state, redux fires off a default action called `@@INIT`. We can compare that against the initial state in our reducer to make sure it's equivalent.
+
+```js
+test('initial state should be set correctly', () => {
+  const state = characterReducer(undefined, { type: '@@INIT' });
+  expect(state).toEqual(INITIAL_STATE);
+});
+```
+
+## Redux Forms
+
+***Haven't finished***
+
+## Type Checking with Prop Types
+
+Type checking in React can be accomplished through a helper library called `prop-types`. This library allows you to check the types of data flowing through your application similar typescript or flow.
+
+```js
+npm install --save prop-types
+```
+
+The standard pattern for typechecking with prop types is to place the types at the end of the component right before the export statement.
+
+```js
+import PropTypes from 'prop-types';
+
+const App = ({ style, title, child, onSave, names, error }) => {
+    // component...
+}
+
+App.propTypes = {
+    style: PropTypes.object,
+    onSave: PropTypes.func,
+    names: PropTypes.array,
+    title: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.object,
+    ]),
+    child: PropTypes.node,
+    error: PropTypes.any
+};
+
+export default App;
+```
+
+We can mandate the use of typechecking - or simply use a warning - in our eslint file:
+
+```js
+"react/forbid-prop-types": "warn", // "error" or "off"
+"react/no-unused-prop-types": "warn", // "error" or "off"
+```
+
+## create-react-app
+
+Create React App was a tool made by Facebook in response to complaints of how complicated it was to get started building applications with React. It works by globally installing `npm install -g create-react-app` and then running the `create-react-app my-app` command. This will take care of all tooling and setup so you can start building React Components right away.
+
+create-react-app can a good solution for testing and learning purposes but there are some considerations to be made if you want to build production applications with this tool. It makes quite a few assumptions about the structure and needs of your application - although you can run an `eject` command to be able to configure the tooling as you want.
+
+For more information, check out [the github repo](https://github.com/facebookincubator/create-react-app).
+
 <hr />
 
 ## Appendix A: Resources
@@ -1888,6 +2135,10 @@ This pattern is pretty typical JavaScript. If we have a function named ```__REDU
 * [Controlled vs Uncontrolled Inputs](https://goshakkk.name/controlled-vs-uncontrolled-inputs-react/)
 * [React's Component Lifecycles](https://medium.com/mofed/reacts-component-lifecycles-adf0ebc89d23)
 * [You Might Not Need Redux](https://medium.com/@dan_abramov/you-might-not-need-redux-be46360cf367)
+* [Jest](https://facebook.github.io/jest/docs/en/api.html)
+* [Redux Forms](https://github.com/erikras/redux-form)
+* [PropTypes](https://github.com/facebook/prop-types)
+* [Create React App](https://github.com/facebookincubator/create-react-app)
 
 <hr />
 

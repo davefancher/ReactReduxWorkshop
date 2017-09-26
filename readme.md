@@ -2129,10 +2129,6 @@ We can mandate the use of typechecking - or simply use a warning - in our eslint
 * [Controlled vs Uncontrolled Inputs](https://goshakkk.name/controlled-vs-uncontrolled-inputs-react/)
 * [React's Component Lifecycles](https://medium.com/mofed/reacts-component-lifecycles-adf0ebc89d23)
 * [You Might Not Need Redux](https://medium.com/@dan_abramov/you-might-not-need-redux-be46360cf367)
-* [Jest](https://facebook.github.io/jest/docs/en/api.html)
-* [Redux Forms](https://github.com/erikras/redux-form)
-* [PropTypes](https://github.com/facebook/prop-types)
-* [Create React App](https://github.com/facebookincubator/create-react-app)
 
 <hr />
 

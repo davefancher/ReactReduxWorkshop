@@ -18,9 +18,13 @@ const PaginationButtons =
         if (props.pagination.last) buttons.push(makeButton(props.pagination.last, "Last"));
 
         return (
-            <div>
-                <div className="btn-group pull-right">{buttons}</div>
-                <div><small>Current Page: {props.pagination.page}</small></div>
+            <div className="row">
+                <div className="col-md-6">
+                    <div><small>Current Page: {props.pagination.page}</small></div>
+                </div>
+                <div className="col-md-6 text-right">
+                    <div className="btn-group">{buttons}</div>
+                </div>
             </div>
         );
     };

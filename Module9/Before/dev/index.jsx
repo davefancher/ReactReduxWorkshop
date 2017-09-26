@@ -1,15 +1,20 @@
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
-import { createStore } from "redux";
+import { createStore, applyMiddleware, compose } from "redux";
 import { Provider } from "react-redux";
-import AuthReducer from "./reducers/authentication.js";
+import thunkMiddleware from "redux-thunk";
+
+import rootReducer from "./reducers.js";
 import AppContainer from "./containers/appContainer.jsx";
 
 require("./site.scss");
 
 const store = createStore(
-    AuthReducer,
-    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+    rootReducer,
+    compose(
+        applyMiddleware(thunkMiddleware),
+        window.__REDUX_DEVTOOLS_EXTENSION__ ? window.__REDUX_DEVTOOLS_EXTENSION__() : f => f
+    )
 );
 
 ReactDOM.render(

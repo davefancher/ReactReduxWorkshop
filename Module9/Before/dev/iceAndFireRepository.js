@@ -52,7 +52,7 @@ function loadData(category, munger) {
     var cachedData = localStorage.getItem(category);
 
     if(cachedData) {
-        return new Promise(resolve => resolve(JSON.parse(cachedData)));
+        return simulateNetworkRequest(() => JSON.parse(cachedData));
     }
 
     const getPage = getPage(category);

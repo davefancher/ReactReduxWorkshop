@@ -81,8 +81,8 @@ class LoginFormImpl extends Component {
 
 const mapStateToProps =
     state => ({
-        username: state.username,
-        validationError: state.validationError
+        username: state.auth.username,
+        validationError: state.auth.validationError
     });
 
 const mapDispatchToProps =

@@ -2106,9 +2106,101 @@ test('initial state should be set correctly', () => {
 });
 ```
 
+### Jest Features
+
+Besides your `start` and `build` commands, here are some useful ones to keep in your package.json:
+
+```js
+"test": "jest", // run the test suite
+"test:watch": "jest --watch", // re-runs test suite when a file changes
+"test:coverage": "jest --coverage", // coverage report
+```
+
+Adding the `--coverage` flag will automatically set up a code coverage report. You can set configuration options for goal level of coverage and any files or folders to ignore in your `package.json`.
+
+```js
+// example
+"jest": {
+    "setupFiles": [
+      "./test-config.js"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 50,
+        "functions": 50,
+        "lines": 50,
+        "statements": 50
+      },
+      "./dev/**/*.js": {
+        "branches": 40,
+        "statements": 40,
+        "line": 40
+      },
+      "./dev/components/**/*.js": {
+        "branches": 40,
+        "functions": 50
+      }
+    }
+}
+```
+
+
 ## Redux Forms
 
-***Haven't finished***
+Redux Form is a higher order component that connects forms and form fields to the redux store. It has a lot of functionality to make managing form state easier and more straightforward.
+
+```js
+npm install --save redux-form
+```
+
+The first step is to add redux-form to the rest of your reducers to be combined.
+
+```js
+import { reducer as formReducer } from 'redux-form';
+const reducers = {
+  // your other reducers here
+  form: formReducer
+};
+```
+
+Now any forms you connect to redux-form will be accessible on `state.form`. Now, the form component needs to be decorated with an HOC.
+
+```js
+class ContactForm extends Component {
+    // return the form to be connected
+}
+
+// Decorate the form component called ContactForm:
+ContactForm = reduxForm({
+  form: 'MyForm' // a unique name for this form
+})(ContactForm);
+
+export default ContactForm;
+```
+
+Now that the form is wrapped in the `reduxForm`, the individual input fields should be replaced with the `Field` component from redux-form.
+
+```js
+return (
+<form onSubmit={handleSubmit}>
+    <div>
+        <label htmlFor="name">Last Name</label>
+        <Field name="name" component="input" type="text"/>
+    </div>
+    <div>
+        <label htmlFor="email">Email</label>
+        <Field name="email" component="input" type="email"/>
+    </div>
+    <button type="submit">Submit</button>
+</form>
+);
+```
+
+That's all there is to the setup! There are many more advanced useful feature like form arrays and custom inputs that we will play around with later. The only left for now is to submit the form. Redux Form gives a `handleSubmit` function to the component that can be accessed on props. We can call that just like any other onSubmit function.
+
+```js
+const { handleSubmit } = this.props;
+```
 
 ## Type Checking with Prop Types
 

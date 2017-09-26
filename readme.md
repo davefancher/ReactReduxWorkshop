@@ -1605,9 +1605,9 @@ Redux functionality is divided into three main categories:
 
 <dl>
     <dt>Actions</dt>
-    <dd>Actions are used to send data to the store. They are represented as plain JavaScript objects and must have a ```type``` property to identify which operation they represent.</dd>
+    <dd>Actions are used to send data to the store. They are represented as plain JavaScript objects and must have a type property to identify which operation they represent.</dd>
     <dt>Reducers</dt>
-    <dd>Reducers describe how the application state changes in response to an action. What that response will be is determined by the action's ```type```. Reducers are often composed to handle state changes across different parts of the application.</dd>
+    <dd>Reducers describe how the application state changes in response to an action. What that response will be is determined by the action's type. Reducers are often composed to handle state changes across different parts of the application.</dd>
     <dt>Stores</dt>
     <dd>Stores hold the current application state and manage changes to that state. Applications will have only one store.</dd>
 </dl>
@@ -1715,7 +1715,7 @@ export default function AuthReducer (state, action) {
 }
 ```
 
-The ```AuthReducer``` function accepts both the current state from the store an the action being applied to the store. It then switches against that required ```type``` property to determine how to apply the action to the store, computes the *new* state and finally returns that *new* state.
+The ```AuthReducer``` function accepts both the current state from the store and the action being applied to the store. It then switches against that required ```type``` property to determine how to apply the action to the store, computes the *new* state and finally returns that *new* state.
 
 Note that the reducer computes and returns a *new* state rather than modifying the supplied state. Understanding this distinction is *critical* for working successfully with Redux. In fact, reducers should be *pure functions* and *never* mutate arguments or induce side-effects which can alter the application state.
 
@@ -1752,7 +1752,7 @@ export default function AuthReducer (state, action) {
 }
 ```
 
-The code in each action branch simply takes creates a new object based upon the current state (via the spread operator) and sets the ```username``` and ```validationError``` properties as appropriate for the respective action type. In general, this pattern will apply to most reducers you'll write.
+The code in each action branch simply creates a new object based upon the current state (via the spread operator) and sets the ```username``` and ```validationError``` properties as appropriate for the respective action type. In general, this pattern will apply to most reducers you'll write.
 
 Although we've largely completed our first reducer it's still missing one key piece of information: what the initial state looks like. We know based on what we've written that our state should have the ```username``` and ```validationError``` values but how do those get populated initially such as when the application is being loaded?
 

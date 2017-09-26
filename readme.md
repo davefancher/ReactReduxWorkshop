@@ -1874,7 +1874,39 @@ This pattern is pretty typical JavaScript. If we have a function named ```__REDU
 
 ## Module 9: Asynchronous Actions and Router Composition
 
-***Coming Soon***
+We've nearly covered the core concepts for developing applications with React and Redux but in order for our application to more closely resemble a "real-world" application we should have Redux control more than just our login as well as have more interaction with the underlying data.
+
+In the interest of staying focused on working with React we kept our interactions with the Ice and Fire API to a minimum. In keeping with that theme, we're going to fast-forward a bit and use the code from the ```Module9/Begin``` folder as the starting point for our examples in this module.
+
+> Because we're starting from a common point with the ```Begin``` code be sure to both stop any current webpack dev server instances and run ```npm install``` to restore the packages. You're free to modify the code within the ```Begin``` folder but you may find it preferable to copy the code to leave the original code intact.
+
+Although the basic structure of the app is the same as what we've been building all along there are a number of important changes we should look at before continuing.
+
+If you haven't done so already, go ahead and execute ```npm start``` to run this new version of the application.
+
+You should immediately notice one change as soon as the page loads - a "busy" spinner now briefly appears to indicate some background activity. Switch over to the characters tab and you'll also see that instead of a bulleted list we now have a table with much more data and interaction methods! We can control the number of characters on the page, view the details of a character, and even change which page we're viewing.
+
+We're not going to spend much time looking at the implementation details of most of these changes because they're with few exceptions (which we will look at), they're really just extensions of what we've already learned. For instance, the character table is just a new component which emits a table based on data returned from an expanded `IceAndFireRepository`. There are however, a few interesting things to look at so let's start with the ```IceAndFireRepository``` since it's going to play a major role in the rest of this module.
+
+### IceAndFireRepository Revisited
+
+In the original incarnation of the ```IceAndFireRepository``` when we received the response for a page we transformed (mapped) each item in the response to an object containing the character's name (or first alias). That version of the repository exposed only a single function - ```getCharacters``` which, while it met our needs at the time, was rather limiting in terms of what a repository should do.
+
+This new version does much, much more. In fact, even though we can't make any changes to the API data (it's read only) this repository simulates working with a database by pre-loading all of the character data from the API and caching it away in local storage! This provides us with greater query capabilities as well as gives us the opportunity to manipulate that data. (It also lets us go easy on the conference center WiFi after the initial data load!) For an added touch, it's all promise-based so we can simulate delays for network traffic and open the door to dispatching Redux actions asynchronously.
+
+Ultimately there's no magic here. All we've done is extend the foundation we built with the original version. If you're curious about how this version works, feel free to spend some time looking it over.
+
+### Enabling Asynchronous Actions
+
+The next key change this version introduces is the ability to dispatch Redux actions asynchronously. Redux doesn't support this capability out-of-the-box so we've added a package called ```redux-thunk``` to the project.
+
+```redux-thunk``` is a piece of ```Redux``` middleware which we won't go into beyond saying that it extend's Redux's base store capabilities.
+
+In order to activate the middleware we needed to import it from the package and pass it to ```createStore``` in ```index.jsx``` via the ```applyMiddleware``` function imported from ```redux```.
+
+Because we also want to continue using the Redux DevTools we couldn't simply pass the result of ```applyMiddleware``` to ```createStore``` because ```createStore``` can accept only one *enhancer* but that's OK because enhancers can be composed into a chain via the ```compose``` function.
+
+The ```compose``` function takes two functions and returns a new function which effectively chains the two functions together such that the result of the first function is passed to the second. In our case, we configure our store with the thunk middleware and allow the configuration to flow into the DevTools extension.
 
 <hr />
 
@@ -2143,7 +2175,7 @@ We can mandate the use of typechecking - or simply use a warning - in our eslint
 
 ## Appendix C: Create React App
 
-Create React App was a tool made by Facebook in response to complaints of how complicated it was to get started building applications with React. It works by globally installing `npm install -g create-react-app` and then running the `create-react-app my-app` command. This will take care of all tooling and setup so you can start building React Components right away.
+Create React App is a tool made by Facebook in response to complaints of how complicated it was to get started building applications with React. It works by globally installing `npm install -g create-react-app` and then running the `create-react-app my-app` command. This will take care of all tooling and setup so you can start building React Components right away.
 
 create-react-app can a good solution for testing and learning purposes but there are some considerations to be made if you want to build production applications with this tool. It makes quite a few assumptions about the structure and needs of your application - although you can run an `eject` command to be able to configure the tooling as you want.
 

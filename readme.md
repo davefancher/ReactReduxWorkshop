@@ -1870,13 +1870,15 @@ const store = createStore(
 
 This pattern is pretty typical JavaScript. If we have a function named ```__REDUX_DEVTOOLS_EXTENSION__``` attached to the ```window``` object, we execute it. Now save the file and play around with the DevTools for a bit because they're actually pretty amazing. (You may need to force-refresh the page for this particular change to take effect).
 
-## Module 9: Router Composition and Asynchronous Actions
+<hr />
+
+## Module 9: Asynchronous Actions and Router Composition
 
 ***Coming Soon***
 
-## Higher Order Component Module
+<hr />
 
-Higher order components (HOCs), take one or more React components as arguments and return an enhanced component. A common example of this is for checking that a user is authenticated before being allowed to go to certain routes.
+## Module 10: Higher-Order Components
 
 In our example App, we have a LoginForm component that either returns a form to allow the user to login:
 
@@ -1913,7 +1915,7 @@ Right now, the rest of the app works exactly the same whether or not the user is
 
 Since we are using localStorage to store login credentials right now, we can retrieve the username from there to check whether or not they are logged in: `localStorage.getItem("username");`.
 
-The only left to do would be to re-route the user if they try to navigate to an authenticated route. Since most apps will have multiple routes where they have to check for authentication, it makes sense to make this functionality a separate and re-useable component. Basically, we need a function that takes in any component we pass it, enhances the component by adding authentication checks and re-routing, and then returns a new component.
+The only thing left to do would be to redirect the user if they try to navigate to an authenticated route. Since most apps will have multiple routes where they have to check for authentication, it makes sense to make this functionality a separate and reuseable component. Basically, we need a function that takes in any component we pass it, enhances the component by adding authentication checks and re-routing, and then returns a new component.
 
 ```js
 export default function(AuthComponent) {

@@ -7,11 +7,11 @@ export default function(AuthComponent) {
       router: React.PropTypes.object
     }
 
-    constructor () {
-      super();
+    constructor (props, context) {
+      super(props);
       const authenticated = localStorage.getItem("username");
       if (!authenticated) {
-        this.context.router.history.push('/');
+        context.router.history.push('/');
       }
     }
 

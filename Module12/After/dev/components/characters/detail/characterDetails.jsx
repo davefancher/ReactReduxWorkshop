@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import FontAwesome from "react-fontawesome";
 import Loading from "../../shared/loading.jsx";
 import LifeEventField from "../lifeEventField.jsx";
-
+import IceAndFireRepository from "../../../IceAndFireRepository.js";
 import renderInput from '../form/renderInput';
 import renderAliasArray from '../form/renderAliasArray';
 import validate from '../form/validate';
@@ -74,17 +74,19 @@ class CharacterDetails extends Component {
     }
 
     submitForm (e) {
-        let characters = JSON.parse(localStorage.getItem('characters'));
-
         const character = this.props.character;
         const { gender, culture, aliases } = this.props.formFields.values;
         character.gender = gender;
         character.culture = culture;
         character.aliases = aliases;
-        characters.splice(character.id - 1, 1, character);
 
-        this.toggleEdit();
-        this.notifySave();
+        IceAndFireRepository
+            .characters
+            .store(character)
+            .then(character => {
+                this.toggleEdit();
+                this.notifySave();
+            });
     }
 
     notifySave () {

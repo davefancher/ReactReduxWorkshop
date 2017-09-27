@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for dev/components/characters/list/characterTable.jsx</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../../../prettify.css" />
+    <link rel="stylesheet" href="../../../../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../../../../index.html">All files</a> / <a href="index.html">dev/components/characters/list</a> characterTable.jsx
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">16% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>4/25</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>0/14</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>0/8</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">20% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>4/20</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line low'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import React, { Component } from "react";
+import { Route, Link } from "react-router-dom";
+import Loading from "../../shared/loading.jsx";
+import LifeEventField from "../lifeEventField.jsx";
+&nbsp;
+const PaginationButtons =
+<span class="fstat-no" title="function not covered" >    (p</span>rops) =&gt;
+    {
+        var pageSize = <span class="cstat-no" title="statement not covered" >props.pagination.pageSize;</span>
+        var makeButton = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(t</span>arget, label) =&gt;</span>
+<span class="cstat-no" title="statement not covered" >            &lt;button onClick={<span class="fstat-no" title="function not covered" >()</span> =&gt; <span class="cstat-no" title="statement not covered" >props.getPage({ page: target, pageSize: pageSize })}</span> className="btn btn-primary" key={label}&gt;</span>
+                {label}
+            &lt;/button&gt;;  
+        var buttons = <span class="cstat-no" title="statement not covered" >[];</span>
+<span class="cstat-no" title="statement not covered" >        if (props.pagination.first) <span class="cstat-no" title="statement not covered" >buttons.push(makeButton(props.pagination.first, "First"));</span></span>
+<span class="cstat-no" title="statement not covered" >        if (props.pagination.prev) <span class="cstat-no" title="statement not covered" >buttons.push(makeButton(props.pagination.prev, "Previous"));</span></span>
+<span class="cstat-no" title="statement not covered" >        if (props.pagination.next) <span class="cstat-no" title="statement not covered" >buttons.push(makeButton(props.pagination.next, "Next"));</span></span>
+<span class="cstat-no" title="statement not covered" >        if (props.pagination.last) <span class="cstat-no" title="statement not covered" >buttons.push(makeButton(props.pagination.last, "Last"));</span></span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        return (</span>
+            &lt;div&gt;
+                &lt;div className="btn-group pull-right"&gt;{buttons}&lt;/div&gt;
+                &lt;div&gt;&lt;small&gt;Current Page: {props.pagination.page}&lt;/small&gt;&lt;/div&gt;
+            &lt;/div&gt;
+        );
+    };
+&nbsp;
+const CharacterRow =
+<span class="fstat-no" title="function not covered" >    (p</span>rops) =&gt;
+<span class="cstat-no" title="statement not covered" >        &lt;tr key={props.id}&gt;</span>
+            &lt;td&gt;
+                &lt;Link to={`/characters/${props.id}`}&gt;
+                    {(props.name ? props.name : &lt;i&gt;{props.aliases[0]}&lt;/i&gt;)}
+                &lt;/Link&gt;&lt;/td&gt;
+            &lt;td&gt;{props.gender}&lt;/td&gt;
+            &lt;td&gt;{props.culture}&lt;/td&gt;
+            &lt;td&gt;
+                &lt;LifeEventField
+                    date={props.birthDate}
+                    location={props.birthLocation} /&gt;
+            &lt;/td&gt;
+            &lt;td&gt;
+                &lt;LifeEventField
+                    date={props.deathDate}
+                    location={props.deathLocation} /&gt;
+            &lt;/td&gt;
+        &lt;/tr&gt;;
+&nbsp;
+const NoCharacters =
+<span class="fstat-no" title="function not covered" >    (p</span>rops) =&gt;
+<span class="cstat-no" title="statement not covered" >        &lt;tr&gt;</span>
+            &lt;td colSpan="5"&gt;No characters found&lt;/td&gt;
+        &lt;/tr&gt;
+&nbsp;
+const CharacterRows =
+<span class="fstat-no" title="function not covered" >    (p</span>rops) =&gt;
+<span class="cstat-no" title="statement not covered" >        &lt;tbody&gt;</span>
+        {props.characters.length === 0
+            ? [ &lt;NoCharacters key="0" /&gt; ]
+            : props.characters.map(CharacterRow)}
+        &lt;/tbody&gt;;
+&nbsp;
+export class CharacterTable extends Component {
+<span class="fstat-no" title="function not covered" >    co</span>mponentDidMount() {
+<span class="cstat-no" title="statement not covered" >        this.props.getPage({pageSize: this.props.pagination.pageSize, page: 1});</span>
+    }
+&nbsp;
+<span class="fstat-no" title="function not covered" >    re</span>nder () {
+<span class="cstat-no" title="statement not covered" >        if (this.props.loading) {</span>
+<span class="cstat-no" title="statement not covered" >            return &lt;Loading /&gt;;</span>
+        }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        return (</span>
+            &lt;div&gt;
+                &lt;div className="form-horizontal"&gt;
+                    &lt;div className="form-group"&gt;
+                        &lt;label htmlFor="pageSizeSelect" className="col-sm-2"&gt;Items Per Page:&lt;/label&gt;
+                        &lt;div className="col-sm-10"&gt;
+                            &lt;select id="pageSizeSelect"
+                                    value={this.props.pagination.pageSize}
+                                    onChange={this.props.changePageSize}&gt;
+                                &lt;option&gt;10&lt;/option&gt;
+                                &lt;option&gt;25&lt;/option&gt;
+                                &lt;option&gt;50&lt;/option&gt;
+                            &lt;/select&gt;
+                        &lt;/div&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+                &lt;table className="table table-striped table-bordered"&gt;
+                    &lt;thead&gt;
+                        &lt;tr&gt;
+                            &lt;th&gt;Name&lt;/th&gt;
+                            &lt;th&gt;Gender&lt;/th&gt;
+                            &lt;th&gt;Culture&lt;/th&gt;
+                            &lt;th&gt;Born&lt;/th&gt;
+                            &lt;th&gt;Died&lt;/th&gt;
+                        &lt;/tr&gt;
+                    &lt;/thead&gt;
+                    &lt;CharacterRows characters={this.props.characters} /&gt;
+                &lt;/table&gt;
+                &lt;PaginationButtons getPage={this.props.getPage} pagination={this.props.pagination} /&gt;
+            &lt;/div&gt;
+        );
+    }
+}</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Wed Sep 27 2017 13:57:49 GMT-0400 (EDT)
+</div>
+</div>
+<script src="../../../../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../../../../sorter.js"></script>
+</body>
+</html>

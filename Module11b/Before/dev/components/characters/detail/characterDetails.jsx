@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import Loading from "../../shared/loading.jsx";
 import LifeEventField from "../lifeEventField.jsx";
 
-const List = (props) => {
+export const List = (props) => {
     if (props.length === 0) return null;
 
     const labelStyle = {
@@ -19,7 +19,7 @@ const List = (props) => {
         </div>
     )
 }
-const PropertyGroup = (props) => {
+export const PropertyGroup = (props) => {
     var content = null;
 
     if(props.children) {

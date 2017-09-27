@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for dev/containers/characters/characterHome.jsx</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../../prettify.css" />
+    <link rel="stylesheet" href="../../../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../../../index.html">All files</a> / <a href="index.html">dev/containers/characters</a> characterHome.jsx
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">6.67% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>1/15</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>0/2</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>0/9</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">7.69% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>1/13</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line low'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import React, { Component } from "react";
+import { Switch, Route } from "react-router-dom";
+import { connect } from "react-redux";
+import { fetchCharacters, fetchSingleCharacter } from "../../actions/characters.js";
+import { CharacterTable } from "../../components/characters/list/characterTable.jsx";
+import { CharacterDetails } from "../../components/characters/detail/characterDetails.jsx";
+import ErrorMessage from "../../components/shared/errorMessage.jsx";
+&nbsp;
+class CharacterHome extends Component {
+<span class="fstat-no" title="function not covered" >    co</span>nstructor (props) {
+<span class="cstat-no" title="statement not covered" >        super(props);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        this.getPage = this.getPage.bind(this);</span>
+<span class="cstat-no" title="statement not covered" >        this.getCharacter = this.getCharacter.bind(this);</span>
+<span class="cstat-no" title="statement not covered" >        this.changePageSize = this.changePageSize.bind(this);</span>
+    }
+&nbsp;
+<span class="fstat-no" title="function not covered" >    ge</span>tPage (pageInfo) {
+<span class="cstat-no" title="statement not covered" >        this.props.fetchCharacters(pageInfo);</span>
+    }
+&nbsp;
+<span class="fstat-no" title="function not covered" >    ch</span>angePageSize (event) { 
+<span class="cstat-no" title="statement not covered" >        this.getPage({ pageSize: event.target.value, page: 1}); </span>
+    } 
+&nbsp;
+<span class="fstat-no" title="function not covered" >    ge</span>tCharacter (characterId) {
+<span class="cstat-no" title="statement not covered" >        if(!characterId) <span class="cstat-no" title="statement not covered" >return;</span></span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        this.props.fetchSingleCharacter(characterId);</span>
+    }
+&nbsp;
+<span class="fstat-no" title="function not covered" >    re</span>nder () {
+<span class="cstat-no" title="statement not covered" >        return (</span>
+            &lt;div&gt;
+                &lt;ErrorMessage message={this.props.errorMessage} /&gt;
+                &lt;Switch&gt;
+                    &lt;Route exact path={this.props.match.url} render={<span class="fstat-no" title="function not covered" >pr</span>ops =&gt; (
+<span class="cstat-no" title="statement not covered" >                        &lt;CharacterTable</span>
+                            getPage={this.getPage}
+                            changePageSize={this.changePageSize}
+                            {...this.props} /&gt;
+                        )
+                    } /&gt;
+                    &lt;Route path={`${this.props.match.url}/:id`} render={<span class="fstat-no" title="function not covered" >pr</span>ops =&gt; (
+<span class="cstat-no" title="statement not covered" >                        &lt;CharacterDetails</span>
+                            getCharacter={<span class="fstat-no" title="function not covered" >()</span> =&gt; <span class="cstat-no" title="statement not covered" >this.getCharacter(parseInt(props.match.params.id, 10)) </span>}
+                            characterId={props.match.params.id}
+                            {...this.props} /&gt;
+                        )
+                    } /&gt;
+                &lt;/Switch&gt;
+            &lt;/div&gt;);
+    }
+}
+&nbsp;
+const mapStateToProps =
+<span class="fstat-no" title="function not covered" >    st</span>ate =&gt; (<span class="cstat-no" title="statement not covered" >{</span>
+        characters: state.characters.characters,
+        character: state.characters.character,
+        pagination: state.characters.pagination,
+        loading: state.characters.loading,
+        errorMessage: state.characters.errorMessage
+    });
+&nbsp;
+export default connect(mapStateToProps, { fetchCharacters, fetchSingleCharacter })(CharacterHome);
+&nbsp;</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Wed Sep 27 2017 13:57:49 GMT-0400 (EDT)
+</div>
+</div>
+<script src="../../../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../../../sorter.js"></script>
+</body>
+</html>

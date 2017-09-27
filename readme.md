@@ -208,6 +208,13 @@ Congratulations! Your app is now configured!
 
 <hr />
 
+*Review Module 2:*
+
+1. Explain the toolchain used for bundling, building, and transpiling React applications.
+2. What are some of the features and reasons to use webpack-dev-server?
+
+<hr />
+
 ## Module 3: My First React Project: Hello World
 
 In the last section we built our workspace and imported all the necessary components to build a simple React application but we haven't actually started using React yet since all we're serving up is some HTML.
@@ -240,7 +247,7 @@ Another important item of note is that all React components must return one of t
 * A single value
 * `null`
 
-This restriction exists because again, we're just building JavaScript objects.
+This restriction exists because again, we're just building JavaScript objects. (*Note: React Fiber will allow you to return multiple root elements. See [Appendix B: Resources](#appendix-b-resources).)
 
 Now that we have our component and understand a bit of what's going on, let's see how to start using it within our application.
 
@@ -339,6 +346,7 @@ In this final revision we've made several modifications:
 Although the end result will the same as before we've begun the process of building composable React components. Components aren't usually quite as simple as what we've seen in this example though so let's move on to a more complex example.
 
 <hr />
+
 
 ## Module 4: Class Components
 
@@ -859,6 +867,13 @@ render () {
 Now when we save the file we should see the button style update to reflect what we specified with the style object.
 
 Like anything else, this approach has positive and negative aspects. It's good for keeping the styles with the components but short of passing certain styles around through props it feels rather limiting. It also doesn't easily support various underlying pseudo-classes such as `a:hover` which dramatically diminishes its utility.
+
+<hr />
+
+*Review Module 4:
+
+1. Compare the various lifecycle methods. How can they help when building a user interface?
+2. Which lifecycle methods will be triggered by calling setState()? In what order?
 
 <hr />
 
@@ -2650,6 +2665,7 @@ Redux Forms handles passing in the field values as an argument, so we can test a
 * [PropTypes](https://github.com/facebook/prop-types)
 * [Create React App](https://github.com/facebookincubator/create-react-app)
 * [React Fiber](http://isfiberreadyyet.com/)
+* [React Version 16 (Fiber) Release](https://facebook.github.io/react/blog/)
 
 <hr />
 

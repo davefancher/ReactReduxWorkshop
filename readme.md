@@ -1941,7 +1941,37 @@ Ultimately `initializeApp` app is responsible for dispatching the `APP.INITIALIZ
 
 So how do we initiate this initialization? The answer to that lies in `/dev/containers/appContainer.jsx`.
 
-Once again, most of the code should look rather familiar.
+Once again, most of the code should look rather familiar. We still need `connect` to wrap our component and we still use `mapStateToProps` to extract the various pieces of state we need from the store to props that the component cares about but rather than using `mapDispatchToProps` we use an alternate syntax where we simply pass an object consisting of the dispatching functions. Notice that we're not explicitly specifying property names here. Instead we rely on the compiler to infer the name for us.
+
+The only function we need to pass to connect is the `initializeApp` function we discussed. We then invoke that function within the `App` component's constructor but where's the reference to the dispatcher?
+
+A few moment ago we discussed how the `initializeApp` function is a higher order function which accepts the data needed for the action and returns a function which accepts the dispatcher. Surely we need to give the function a dispatcher, right? We actually already have by virtue of how we've mapped the function to a prop.
+
+Redux actually wraps the function in a separate function that provides the dispatcher for us. If you were to put a breakpoint in the constructor and inspect the value of `props.initializeApp` you'd see something like the following:
+
+```javascript
+ƒ () {
+    return dispatch(actionCreator.apply(undefined, arguments));
+}
+```
+
+Somewhere within the Redux code, our action creator was wrapped in this function and referenced which was added to the props thus hiding the complexity of handling the dispatching. Pretty clever, huh?
+
+### Reducing Asynchronous Actions
+
+Defining a reducer for asynchronous actions is identical to defining reducers for synchronous actions. In fact, the reducer doesn't care at all whether the action was dispatched synchronously or asynchronously.
+
+This is another reason why it's so important for our reducers to be *pure* functions. Since actions can be dispatched either synchronously or asynchronously the reducers should have no dependency on the current state of the system; they should depend on nothing more than the state and action passed in nor should they attempt to change the state of the system in any way to maintain its integrity.
+
+In the case of the `AppReducer` (defined in `/dev/reducers/app.js`) we've kept things simple, `APP.INITIALIZING` sets `isInitialized` to `false` while `APP.INITIALIZED` sets `isInitialized` to `true`.
+
+Now to see this all in action, make sure the server is started (`npm start`) and observe how when we first load the application we're presented with a message stating that our content will be available shortly along with a spinner. This message quickly disappears as the initialization completes and the `APP.INITIALIZED` action is dispatched.
+
+### Composing Reducers
+
+As an application grows we'll gradually add more and more items into the store. Over time this can make managing the state complicated because remember, Redux uses only a single store.
+
+To mitigate this problem we can turn to a technique called *reducer composition* whereby we create multiple reducers to handle various parts of the application and combine them via the `combineReducers` function.
 
 <hr />
 

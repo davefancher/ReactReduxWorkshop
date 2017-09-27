@@ -1900,13 +1900,48 @@ Ultimately there's no magic here. All we've done is extend the foundation we bui
 
 The next key change this version introduces is the ability to dispatch Redux actions asynchronously. Redux doesn't support this capability out-of-the-box so we've added a package called `redux-thunk` to the project.
 
-`redux-thunk` is a piece of `Redux` middleware which we won't go into beyond saying that it extend's Redux's base store capabilities.
+`redux-thunk` is a piece of `Redux` middleware which we won't go into beyond saying that it extends Redux's base store capabilities.
 
 In order to activate the middleware we needed to import it from the package and pass it to `createStore` in `index.jsx` via the `applyMiddleware` function imported from `redux`.
 
-Because we also want to continue using the Redux DevTools we couldn't simply pass the result of `applyMiddleware` to `createStore` because `createStore` can accept only one *enhancer* but that's OK because enhancers can be composed into a chain via the `compose` function.
+Because we also want to continue using the Redux DevTools we can't merely pass the result of `applyMiddleware` to `createStore` because `createStore` can accept only one *enhancer* but that's OK because enhancers can be composed into a chain via the `compose` function.
 
-The `compose` function takes two functions and returns a new function which effectively chains the two functions together such that the result of the first function is passed to the second. In our case, we configure our store with the thunk middleware and allow the configuration to flow into the DevTools extension.
+The `compose` function takes two functions and returns a new function which effectively chains the two functions together such that the result of the first function is passed to the second and so on. In our case, we configure our store with the thunk middleware and allow the configuration to flow into the DevTools extension. This allows us to handle both asynchronous dispatching and interacting with the Redux DevTools.
+
+With the thunk middleware connected to the store we can now pass actions either synchronously as we saw with the `LoginForm` or asynchronously but what does that look like?
+
+### Using Asynchronous Actions
+
+Executing actions asyncronously requires us to change how we think about our action creators. The three action creators we defined for the `LoginForm` returned had one job - to predictably create the action object. The same holds true with asynchronous actions; we'll define action creators to create the action object but we'll seldom call those action creators directly and instead call them through an intermediary higher-order function which we provide with the action data and returns another function which is given the dispatcher.
+
+The sample project already has an example of this pattern in `/dev/actions/app.js` so let's take a look at that now.
+
+In general, everything defined in `app.js` should look familiar. We first define an object to hold our action types. In this case our actions are `APP.INITIALIZING` and `APP.INITIALIZED`. These are similar to what we defined in `authentication.js` and while they identify different actions that we'll dispatch to the store, they represent phases of the same operation - app initialization.
+
+Next we have the `appInitializing` and `appInitialized` functions which return the corresponding action objects. These are just like what we saw in `authentication.js` but unlike those functions we won't be calling these directly but through the `initializeApp` function which is ultimately responsible for creating and dispatching both actions at the appropriate times.
+
+Here's `initializeApp` reproduced in its entirety:
+
+```javascript
+export const initializeApp =
+    () =>
+        dispatch => {
+            dispatch(appInitializing());
+            return (
+                IceAndFireRepository
+                    .init()
+                    .then(response => dispatch(appInitialized()))
+            );
+        };
+```
+
+Unlike the standard action creators, `initializeApp` returns a function that accepts the dispatcher. We'll look at how that returned function is invoked a bit later.
+
+Ultimately `initializeApp` app is responsible for dispatching the `APP.INITIALIZE` action, initiating an asynchronous operation to pre-load some data, and, once that operation completes, dispatching the `APP.INITIALIZED` action.
+
+So how do we initiate this initialization? The answer to that lies in `/dev/containers/appContainer.jsx`.
+
+Once again, most of the code should look rather familiar.
 
 <hr />
 

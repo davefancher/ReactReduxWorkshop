@@ -2147,6 +2147,8 @@ Adding the `--coverage` flag will automatically set up a code coverage report. Y
 
 ## Redux Forms
 
+### Setup
+
 Redux Form is a higher order component that connects forms and form fields to the redux store. It has a lot of functionality to make managing form state easier and more straightforward.
 
 ```js
@@ -2163,19 +2165,19 @@ const reducers = {
 };
 ```
 
-Now any forms you connect to redux-form will be accessible on `state.form`. Now, the form component needs to be decorated with an HOC.
+Now any forms you connect to redux-form will be accessible on `state.form` as long as the form component is wrapped with the reduxForm decorator. As an example, let's make the character fields editable in the `/characters/:id` route.
 
 ```js
-class ContactForm extends Component {
+class CharacterDetails extends Component {
     // return the form to be connected
 }
 
 // Decorate the form component called ContactForm:
-ContactForm = reduxForm({
-  form: 'MyForm' // a unique name for this form
-})(ContactForm);
+CharacterDetails = reduxForm({
+  form: 'characterForm' // a unique name for this form
+})(CharacterDetails);
 
-export default ContactForm;
+export default characterDetails;
 ```
 
 Now that the form is wrapped in the `reduxForm`, the individual input fields should be replaced with the `Field` component from redux-form.
@@ -2183,26 +2185,220 @@ Now that the form is wrapped in the `reduxForm`, the individual input fields sho
 ```js
 return (
 <form onSubmit={handleSubmit}>
-    <div>
-        <label htmlFor="name">Last Name</label>
-        <Field name="name" component="input" type="text"/>
-    </div>
-    <div>
-        <label htmlFor="email">Email</label>
-        <Field name="email" component="input" type="email"/>
-    </div>
-    <button type="submit">Submit</button>
+    <Field
+        name="gender"
+        component="input"
+    />
+    <Field
+        name="culture"
+        component="input"
+    />
+    <Field
+        name="born"
+        component="input"
+    />
+    <Field
+        name="died"
+        component="input"
+    />
+    <FieldArray
+        name="aliases"
+        component="input"
+    />
+    <Field
+        name="titles"
+        component="input"
+    />
+    <Field
+        name="portrayed-by"
+        component="input"
+    />
+    <button className="btn btn-primary">Save</button>
 </form>
 );
 ```
 
-That's all there is to the setup! There are many more advanced useful feature like form arrays and custom inputs that we will play around with later. The only left for now is to submit the form. Redux Form gives a `handleSubmit` function to the component that can be accessed on props. We can call that just like any other onSubmit function.
+That's all there is to the setup! You can now see the controlled inputs being updated on the redux state.
+
+What about populating the form. Right now the inputs are blank but we want them to start already populated with the characters information. Redux Form gives us and way to set initial values for input fields but we have to connect it to the redux store with the `connect()` function. This method gives us access to state and props to get the initial data that we need.
+
+```js
+CharacterDetailsForm = connect(
+  (state, props) => {
+
+    const {
+        name,
+        gender
+    } = state.characters.character;
+
+    const initialValues = {
+        name: name || "Unknown",
+        gender
+    };
+
+    return {
+      initialValues
+    };
+  }
+)(CharacterDetailsForm);
+```
+
+Now the name and gender will be populated when the form renders. Likewise the rest of the fields can be connected in the same manner - only the key in the `initialValues` object has to match up to the `name` field on the input.
+
+There are many more advanced useful feature like form arrays and custom inputs that we will play around with later. The only left for now is to submit the form. Redux Form gives a `handleSubmit` function to the component that can be accessed on props. We can call that just like any other onSubmit function.
 
 ```js
 const { handleSubmit } = this.props;
 ```
 
-## Type Checking with Prop Types
+### Redux Form Custom Inputs
+
+It would be nice to also have custom input fields to handle styling and display errors. Instead of setting `component="input"`, we can just add a custom component like so, `component={renderInput}`. Then build the renderInput component:
+
+```js
+const renderInput = ({ input, value, title, placeholder, label,
+      className, meta: { error, touched }, type }) => (
+    <div>
+        <dt>{title}</dt>
+        <dd>
+            <input
+                type={type || "text"}
+                className={className} 
+                placeholder={placeholder}
+                {...input}
+            />
+            {error && <div className="alert alert-danger">{error}</div>}
+        </dd>
+    </div>
+);
+```
+
+Redux Form handles passing the `meta` props to the component so we can handle cases if the component was touched or has a validation error (more on validation later). We can just add the custom input to the form and it's done:
+
+```js
+<Field
+    title="Gender"
+    name="gender"
+    component={renderInput}
+/>
+```
+
+### Redux Form Arrays
+
+The form display fine except some of our components are arrays and not just single fields. For example, a character can have multiple aliases. Redux Form gives us another component to handle these cases (which might be the most useful feature in the library).
+
+```js
+import { FieldArray } from 'redux-form';
+```
+
+Then the `Field` component can just be changed to a `FieldArray` one.
+
+```js
+<FieldArray
+    title="Aliases"
+    name="aliases"
+    component={renderAliasArray}
+/>
+```
+
+Of course, there will need to be another custom component to handle the aliases array.
+
+```js
+const renderAliasArray = ({ fields, title, meta: { error, dirty } }) => (
+    <div>
+        {fields.map((alias, i) =>
+            <Field
+                key={i}
+                title={title}
+                name={alias}
+                type="text"
+                component={renderInput}
+                icon={
+                    <FontAwesome
+                        name='times'
+                        onClick={() => fields.remove(i)}
+                    />
+                }
+            />
+        )}
+        {error && dirty && <span className="alert alert-danger">{error}</span>}
+
+        <button type="button" onClick={() => fields.push()}>Add Alias</button>
+    </div>
+)
+```
+
+Redux forms automatically gives us methods to add fields onto the array and remove them; without the headache! IMO this is the most useful feature of this library.
+
+### Redux Form Validation
+
+Validation is also simple with Redux Forms. Just pass in a validate function to the reduxForm decorator:
+
+```js
+const validate = (values) => {
+  const errors = {};
+
+  if (!values.gender) {
+    errors.gender = 'Required';
+  }
+  if (values.aliases && values.aliases.length > 10) {
+    errors.aliases = { _error: 'To many aliases. Limit to 10.' }
+  }
+
+  return errors;
+};
+
+CharacterDetails = reduxForm({
+    form: 'characterForm',
+    validate
+  })(CharacterDetails);
+```
+
+Redux Forms handles passing in the field values as an argument, so we can test and validate however we want. Then, it's expecting us to return an error object with any of the 'invalid' fields as properties on that object with the messages that we set. Redux Forms handles the passing of the data to our Field components as well and we can display them however we want.
+
+```js
+{error && <span className="alert alert-danger">{error}</span>}
+```
+
+<hr />
+
+## Appendix A: Resources
+
+* [webpack](https://webpack.github.io/)
+* [webpack dev server](https://webpack.github.io/docs/webpack-dev-server.html)
+* [Babel](https://babeljs.io/)
+* [React](https://facebook.github.io/react/)
+* [React-Router](https://reacttraining.com/react-router/)
+* [Redux](http://redux.js.org/)
+* [React createClass vs Component](https://toddmotto.com/react-create-class-versus-component/)
+* [Controlled vs Uncontrolled Inputs](https://goshakkk.name/controlled-vs-uncontrolled-inputs-react/)
+* [React's Component Lifecycles](https://medium.com/mofed/reacts-component-lifecycles-adf0ebc89d23)
+* [You Might Not Need Redux](https://medium.com/@dan_abramov/you-might-not-need-redux-be46360cf367)
+* [Jest](https://facebook.github.io/jest/docs/en/api.html)
+* [Enzyme](https://github.com/airbnb/enzyme)
+* [Redux Forms](https://github.com/erikras/redux-form)
+* [PropTypes](https://github.com/facebook/prop-types)
+* [Create React App](https://github.com/facebookincubator/create-react-app)
+* [React Fiber](http://isfiberreadyyet.com/)
+
+<hr />
+
+## Appendix B: Tutorials
+
+* [Facebook](https://facebook.github.io/react/tutorial/tutorial.html)
+* [Kirupa](https://www.kirupa.com/react/)
+
+<hr />
+
+## Appendix C: Create React App
+
+Create React App is a tool made by Facebook in response to complaints of how complicated it was to get started building applications with React. It works by globally installing `npm install -g create-react-app` and then running the `create-react-app my-app` command. This will take care of all tooling and setup so you can start building React Components right away.
+
+create-react-app can a good solution for testing and learning purposes but there are some considerations to be made if you want to build production applications with this tool. It makes quite a few assumptions about the structure and needs of your application - although you can run an `eject` command to be able to configure the tooling as you want.
+
+For more information, check out [the github repo](https://github.com/facebookincubator/create-react-app).
+
+## Appendix C: Type Checking with Prop Types
 
 Type checking in React can be accomplished through a helper library called `prop-types`. This library allows you to check the types of data flowing through your application similar typescript or flow.
 
@@ -2240,35 +2436,3 @@ We can mandate the use of typechecking - or simply use a warning - in our eslint
 "react/forbid-prop-types": "warn", // "error" or "off"
 "react/no-unused-prop-types": "warn", // "error" or "off"
 ```
-
-<hr />
-
-## Appendix A: Resources
-
-* [webpack](https://webpack.github.io/)
-* [webpack dev server](https://webpack.github.io/docs/webpack-dev-server.html)
-* [Babel](https://babeljs.io/)
-* [React](https://facebook.github.io/react/)
-* [React-Router](https://reacttraining.com/react-router/)
-* [Redux](http://redux.js.org/)
-* [React createClass vs Component](https://toddmotto.com/react-create-class-versus-component/)
-* [Controlled vs Uncontrolled Inputs](https://goshakkk.name/controlled-vs-uncontrolled-inputs-react/)
-* [React's Component Lifecycles](https://medium.com/mofed/reacts-component-lifecycles-adf0ebc89d23)
-* [You Might Not Need Redux](https://medium.com/@dan_abramov/you-might-not-need-redux-be46360cf367)
-
-<hr />
-
-## Appendix B: Tutorials
-
-* [Facebook](https://facebook.github.io/react/tutorial/tutorial.html)
-* [Kirupa](https://www.kirupa.com/react/)
-
-<hr />
-
-## Appendix C: Create React App
-
-Create React App is a tool made by Facebook in response to complaints of how complicated it was to get started building applications with React. It works by globally installing `npm install -g create-react-app` and then running the `create-react-app my-app` command. This will take care of all tooling and setup so you can start building React Components right away.
-
-create-react-app can a good solution for testing and learning purposes but there are some considerations to be made if you want to build production applications with this tool. It makes quite a few assumptions about the structure and needs of your application - although you can run an `eject` command to be able to configure the tooling as you want.
-
-For more information, check out [the github repo](https://github.com/facebookincubator/create-react-app).

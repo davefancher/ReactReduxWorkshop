@@ -2319,7 +2319,7 @@ Of course these examples aren't really practical. Let's get into the ways we can
 
 ### Testing React Components
 
-The first and most basic test for React Components is checking whether or not a component renders correctly. To help with rendering, there is a library called `enzyme` with a lot of helper functions for testing React applications.
+The first and most basic test for React Components is checking whether or not a component renders correctly. To help with rendering, there is a library called `enzyme` with a lot of helper functions for testing React applications - it provides a jquery-like syntax and works very well with Jest and other test suites.
 
 ```js
 npm install --save-dev enzyme
@@ -2390,6 +2390,16 @@ test('initial state should be set correctly', () => {
   expect(state).toEqual(INITIAL_STATE);
 });
 ```
+
+### Mocks and Spies
+
+Mocking functions - or 'spying' on them - let's us test the inner workings of a function and not just the output. These mock functions can be used to test both custom and lifecycle methods on our React classes.
+
+```js
+const mock = jest.fn();
+Date.now = jest.fn(() => 1482363367071);
+```
+
 
 ### Jest Features
 

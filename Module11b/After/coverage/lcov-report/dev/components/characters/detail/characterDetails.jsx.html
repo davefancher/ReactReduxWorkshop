@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for dev/components/characters/detail/characterDetails.jsx</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../../../prettify.css" />
+    <link rel="stylesheet" href="../../../../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../../../../index.html">All files</a> / <a href="index.html">dev/components/characters/detail</a> characterDetails.jsx
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">18.52% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>5/27</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">12.5% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>3/24</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">20% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>1/5</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">19.23% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>5/26</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line low'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import React, { Component } from "react";
+import Loading from "../../shared/loading.jsx";
+import LifeEventField from "../lifeEventField.jsx";
+&nbsp;
+export const List = <span class="fstat-no" title="function not covered" >(p</span>rops) =&gt; {
+<span class="cstat-no" title="statement not covered" >    if (props.length === 0) <span class="cstat-no" title="statement not covered" >return null;</span></span>
+&nbsp;
+    const labelStyle = <span class="cstat-no" title="statement not covered" >{</span>
+        marginRight: "3px",
+        marginBottom: "3px",
+        fontSize: "14px",
+        display: "inline-block",
+        fontWeight: "normal"
+    };
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    return (</span>
+        &lt;div&gt;
+            {props.map(<span class="fstat-no" title="function not covered" >(p</span>, ix) =&gt; <span class="cstat-no" title="statement not covered" >&lt;span key={ix} style={labelStyle} className="label label-default"&gt;{p}&lt;/span&gt;)</span>}
+        &lt;/div&gt;
+    )
+}
+export const PropertyGroup = <span class="fstat-no" title="function not covered" >(p</span>rops) =&gt; {
+    var content = <span class="cstat-no" title="statement not covered" >null;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    if(props.children) {</span>
+<span class="cstat-no" title="statement not covered" >        content = props.children;</span>
+    } else <span class="cstat-no" title="statement not covered" >if (!props.value) {</span>
+<span class="cstat-no" title="statement not covered" >        return null;</span>
+    } else <span class="cstat-no" title="statement not covered" >if(Array.isArray(props.value)) {</span>
+<span class="cstat-no" title="statement not covered" >        content = List(props.value);</span>
+    } else <span class="cstat-no" title="statement not covered" >if (props.value.location &amp;&amp; props.value.date) {</span>
+<span class="cstat-no" title="statement not covered" >        content = &lt;div&gt;{props.value.date}&lt;br /&gt;{props.value.location}&lt;/div&gt;;</span>
+    } else <span class="cstat-no" title="statement not covered" >if (props.value.location) {</span>
+<span class="cstat-no" title="statement not covered" >        content = props.value.location;</span>
+    } else <span class="cstat-no" title="statement not covered" >if (props.value.date) {</span>
+<span class="cstat-no" title="statement not covered" >        content = props.value.date;</span>
+    } else {
+<span class="cstat-no" title="statement not covered" >        content = props.value;</span>
+    }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    return (</span>
+        &lt;div&gt;
+            &lt;dt&gt;{props.title}:&lt;/dt&gt;
+            &lt;dd&gt;{content || &lt;i className="text-muted"&gt;Unknown&lt;/i&gt;}&lt;/dd&gt;
+        &lt;/div&gt;
+    );
+};
+&nbsp;
+export class CharacterDetails extends Component {
+<span class="fstat-no" title="function not covered" >    co</span>mponentDidMount () {
+<span class="cstat-no" title="statement not covered" >        this.props.getCharacter();</span>
+    }
+&nbsp;
+    render () {
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (this.props.loading) {
+<span class="cstat-no" title="statement not covered" >           return &lt;Loading /&gt;;</span>
+        }
+&nbsp;
+        var character = this.props.character;
+&nbsp;
+        return (
+            &lt;div&gt;
+                &lt;h2&gt;{character.name ? character.name : <span class="branch-1 cbranch-no" title="branch not covered" >&lt;i&gt;{character.aliases[0]}*&lt;/i&gt;}</span>&lt;/h2&gt;
+                &lt;dl className="dl-horizontal"&gt;
+                    &lt;PropertyGroup title="Gender" value={character.gender} /&gt;
+                    &lt;PropertyGroup title="Culture" value={character.culture} /&gt;
+                    &lt;PropertyGroup title="Born"&gt;
+                        &lt;LifeEventField date={character.birthDate}
+                                        location={character.birthLocation} /&gt;
+                    &lt;/PropertyGroup&gt;
+                    &lt;PropertyGroup title="Died"&gt;
+                        &lt;LifeEventField date={character.deathDate}
+                                        location={character.deathLocation} /&gt;
+                    &lt;/PropertyGroup&gt;
+                    &lt;PropertyGroup title="Aliases" value={character.aliases} /&gt;
+                    &lt;PropertyGroup title="Titles" value={character.titles} /&gt;
+                    &lt;PropertyGroup title="Portrayed By" value={character.portrayedBy} /&gt;
+                &lt;/dl&gt;
+&nbsp;
+                {character.name ? "" : <span class="branch-1 cbranch-no" title="branch not covered" >&lt;p className="pull-right"&gt;&lt;small className="text-muted"&gt;* - Name unknown, using alias instead&lt;/small&gt;&lt;/p&gt;}</span>
+            &lt;/div&gt;
+        );
+    }
+}
+&nbsp;</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Wed Sep 27 2017 13:57:49 GMT-0400 (EDT)
+</div>
+</div>
+<script src="../../../../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../../../../sorter.js"></script>
+</body>
+</html>

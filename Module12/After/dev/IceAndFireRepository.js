@@ -219,7 +219,7 @@ function store(collection, obj) {
         return collection;
     }
     
-    return collection.map(i => i.id === obj.id ? i : obj);
+    return collection.map(i => i.id === obj.id ? obj : i);
 }
 
 function storeAsync (collection, obj) {

@@ -1980,7 +1980,7 @@ That's basically the idea of HOCs. Now any component can be passed into the func
 *A Note about `react-router`. In order to get access to `this.props.router`, a component must be wrapped with `withRouter` (an HOC from react-router). Once wrapped, the component can dynamically route: `this.context.router.history.push('/');` and perform actions with routes like `push`, `pop`, `replace`, etc.
 
 
-## Testing Basics with Jest
+## Module 11a: Testing Basics with Jest
 
 > Jest is used by Facebook to test all JavaScript code including React applications. One of Jest's philosophies is to provide an integrated "zero-configuration" experience. We observed that when engineers are provided with ready-to-use tools, they end up writing more tests, which in turn results in more stable and healthy code bases. --*Facebook*
 
@@ -2030,7 +2030,7 @@ Now the test passes and we can proceed writing the next test.
 Of course these examples aren't really practical. Let's get into the ways we can test our React application we are building.
 
 
-## Testing React and Redux
+## Module 11b: Testing React and Redux
 
 ### Testing React Components
 
@@ -2145,7 +2145,7 @@ Adding the `--coverage` flag will automatically set up a code coverage report. Y
 ```
 
 
-## Redux Forms
+## Module 12: Redux Forms
 
 ### Setup
 

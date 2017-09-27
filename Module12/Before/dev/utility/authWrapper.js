@@ -7,21 +7,22 @@ export default function(AuthComponent) {
       router: React.PropTypes.object
     }
 
-    componentWillMount() {
+    constructor () {
+      super();
       const authenticated = localStorage.getItem("username");
       if (!authenticated) {
         this.context.router.history.push('/');
       }
     }
 
-    componentWillUpdate(nextProps) {
+    componentWillUpdate (nextProps) {
       const authenticated = localStorage.getItem("username");
       if (!authenticated) {
         this.context.router.history.push('/');
       }
     }
 
-    render() {
+    render () {
       return <AuthComponent {...this.props} />
     }
   }

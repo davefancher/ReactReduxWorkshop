@@ -1131,7 +1131,7 @@ If we select the `LoginForm` element we'll see the same state values we observed
 
 The `Home` component is simply displaying a welcome message so there's nothing interesting to look at there but what about our new `CharacterList` component? When we initialized the state in its constructor we explicitly set the `characters` value to an empty array but the developer tools are showing us very clearly that it's an array of 25 items! These were populated when our API request completed and se handed them over to the component via the call to `setState`!
 
-### Data Munging with Azios
+### Data Munging with Axios
 
 Now that we've observed that we're definitely getting data back from our API request we're close to extending the `CharacterList` component to write out that list of characters.
 

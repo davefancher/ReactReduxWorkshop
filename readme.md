@@ -1973,6 +1973,211 @@ As an application grows we'll gradually add more and more items into the store. 
 
 To mitigate this problem we can turn to a technique called *reducer composition* whereby we create multiple reducers to handle various parts of the application and combine them via the `combineReducers` function.
 
+Like the asynchronous actions, we already see this pattern emerging within our application. We have both an `AppReducer` and an `AuthReducer` which handle actions for different parts of the application but are based on the same store.
+
+As mentioned, we use the `combineReducers` function to combine the reducers into a single reducer chain. We can see this in the application by opening `/dev/reducers.js`.
+
+In this file we import the `combineReducers` function along with each of the reducers we want to combine. We then compose a reducer chain by passing each reducer along to `combineReducers` as an object just like we did with our last `connect` example.
+
+With the `rootReducer` composed we can import that into `dev/index.jsx` and pass it to `createStore` instead of any individual reducers.
+
+One interesting aspect to combining reducers is that each reducer essentially manages its own section of the store. For example, when we combined the reducers we passed them in as `app` and `auth`, respectively. This results in the underlying store being segregated into sections named `app` and `auth` to keep those concerns separated.
+
+### Managing Characters with Asynchronous Actions and Independent State
+
+Now that we've seen how to define asynchronous actions, how to write reducers to handle asynchronous actions, and how to combine multiple reducers into a single reducer chain, let's work through extending the app to handle characters, beginning with some actions.
+
+Create a new file named `characters.js` in the `/dev/actions` folder. In that file import the `IceAndFireRepository` since we'll be using it to drive dispatching some asynchronous actions.
+
+We'd like our list page to show the busy indicator whenever we load a page of data be it from the initial request, changing page size, or changing page. We can accomplish this with a single high-level action which we'll generically call `FETCH_CHARACTERS`. We can subdivide this high-level action into three additional actions to represent whether the request started, completed successfully, or failed.
+
+For convenience we'll define a small helper function to compose the action types for us.
+
+```javascript
+const createRequestTypes = prefix =>
+    ["REQUEST", "SUCCESS", "FAILURE"]
+        .reduce(
+            (obj, type) => { obj[type] = `${prefix}_${type}`; return obj; },
+            {});
+```
+
+The `createRequestTypes` function transforms an array of three values into an object with properties named after the array items and a string value composed of both a prefix and the array value.
+
+We'll use this to define the action type names:
+
+```javascript
+export const FETCH_CHARACTERS = createRequestTypes("FETCH_CHARACTERS");
+```
+
+The result of this function is a type that looks like this:
+
+```javascript
+{
+    "REQUEST": "FETCH_CHARACTERS_REQUEST",
+    "SUCCESS": "FETCH_CHARACTERS_SUCCESS",
+    "FAILURE": "FETCH_CHARACTERS_FAILURE"
+}
+```
+
+Next we can define some action creators for these three action types. They will look similar to what we saw with our app initialization action creators but two of these will accept some data which will be passed along to the store and reducer.
+
+```javascript
+const fetchCharactersRequest =
+    () => ({ type: FETCH_CHARACTERS.REQUEST });
+
+const fetchCharactersSuccess =
+    response => ({
+        type: FETCH_CHARACTERS.SUCCESS,
+        characters: response.characters,
+        pagination: response.pagination
+    });
+
+const fetchCharactersFailure =
+    error => ({
+        type: FETCH_CHARACTERS.FAILURE,
+        error: error
+    });
+```
+
+Finally we can create the `fetchCharacters` function which orchestrates when each of the above action creators are invoked.
+
+```javascript
+export const fetchCharacters =
+    pageInfo =>
+        dispatch => {
+            dispatch(fetchCharacterRequest());
+            return (
+                IceAndFireRepository
+                    .characters
+                    .get(pageInfo)
+                    .then(response => dispatch(fetchCharactersSuccess(response)))
+                    .catch(err => dispatch(fetchCharactersFailure(err)))
+            );
+        };
+```
+
+Soon we'll update our `characterHome` component to no longer call the repository functions directly but instead use this action passed in through the component's props.
+
+Our reducer also follows the familiar pattern. We'll define it in a file named `characters.js` in the `/dev/reducers` folder. Here it is in its entirety:
+
+```javascript
+import {
+    FETCH_CHARACTERS,
+} from "../actions/characters.js";
+
+const INITIAL_STATE = {
+    loading: true,
+    characters: [],
+    pagination: {
+        page: 1,
+        pageSize: 25,
+        first: {},
+        next: {},
+        prev: {},
+        last: {}
+    },
+    errorMessage: ""
+}
+
+export default function (state = INITIAL_STATE, action) {
+    switch(action.type) {
+        case FETCH_CHARACTERS.REQUEST:
+            return {
+                ...state,
+                loading: true,
+                errorMessage: ""
+            };
+
+        case FETCH_CHARACTERS.SUCCESS:
+            return {
+                ...state,
+                loading: false,
+                errorMessage: "",
+                characters: action.characters,
+                pagination: {
+                    first: action.pagination.first,
+                    prev: action.pagination.prev,
+                    next: action.pagination.next,
+                    last: action.pagination.last,
+                    page: action.pagination.page,
+                    pageSize: action.pagination.pageSize
+                }
+             };
+
+        case FETCH_CHARACTERS.FAILURE:
+            return {
+                ...state,
+                loading: false,
+                characters: [],
+                errorMessage: action.error.message
+            };
+    }
+
+    return state;
+}
+```
+
+The only real difference of note between this reducer and the reducers we've seen before is that we have more state that we're managing. All of the other concepts apply exactly as with those reducers.
+
+Now let's combine this reducer with the others by adding it to `/dev/reducers.js`. All we need to do there is import the type and add it to the object following the same patterns that are already in the file.
+
+Because we're already creating our store with the `rootReducer` defined in `/dev/reducers.js` there are no changes necessary in `/dev/index.jsx`.
+
+Finally, let's `connect` the `CharacterHome` component to Redux and take advantage of the store, actions, and reducers starting with defining the `mapStateToProps` function.
+
+```javascript
+const mapStateToProps =
+    state => ({
+        characters: state.characters.characters,
+        pagination: state.characters.pagination,
+        loading: state.characters.loading,
+        errorMessage: state.characters.errorMessage
+    });
+```
+
+Notice how we're reading each value from an object in the state called `characters`. This name corresponds with the name we gave the reducer when combining it with `app` and `auth`. We could add that entire object to the state but by explicitly adding each value we retain greater control over what triggers re-rendering the component.
+
+Now we can connect the component to the store as shown below. (Be sure to import the `fetchCharacters` function!)
+
+```javascript
+export default connect(mapStateToProps, { fetchCharacters })(CharacterHome);
+```
+
+At this point we're ready to wire-up the final piece - invoking the asynchronous action from the `CharacterHome` component! We want to be a bit careful about what we rip out as we make this transition, however, because part of the component state is still being managed by React and not Redux.
+
+First, replace the initial state in `CharacterHome`'s constructor with the following:
+
+```javascript
+this.state = {
+    character: {
+        name: "",
+        aliases: []
+    }
+};
+```
+
+> This revised initial state showcases how we can mix React state management with Redux which may be appropriate for some scenarios. It seems that individual characters should also be managed by Redux doing so would be a great exercise for self-study.
+
+Now update `getPage` to not call the repository directly but instead invoke the `fetchCharacters` function from the component's props.
+
+Finally, let's update the `characterTable` JSX to account for the various states.
+
+```javascript
+render () {
+    if (this.props.loading) {
+        return <Loading />;
+    }
+
+    return (
+        <div>
+            <ErrorMessage message={this.props.errorMessage} />
+            <!-- snip -->
+        </div>);
+}
+```
+
+We finally have everything in place to asynchronously dispatch and handle Redux actions for getting pages of data. When the request is active loading spinner then, when complete, we return the user to the updated table.
+
 <hr />
 
 ## Module 10: Higher-Order Components

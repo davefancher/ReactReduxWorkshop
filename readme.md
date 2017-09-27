@@ -158,7 +158,7 @@ npm install webpack webpack-dev-server react-hot-loader@3.0.0-beta.7 --save
 While we're still installing packages, let's also take care of adding some additional packages for compiling [SASS](http://sass-lang.com) sheets as well. We won't be doing much custom styling today but we might as well include them.
 
 ```bash
-npm install --save-dev node-sass sass-loader css-loader style-loader
+npm install node-sass sass-loader css-loader style-loader --save
 ```
 
 ### Configuring Babel and Webpack
@@ -190,7 +190,7 @@ Finally, let's add the `index.jsx` and `site.scss` files to the `dev` folder. Yo
 The last step before we can start building our React application is to configure some build and start scripts that tell node what to do when `npm build` or `npm start` is executed. To do so, open the `package.json` file and add the following two lines to the `scripts` node:
 
 ```javascript
-"build": "webpack --config ./webpack.prod.config.js --progress --colors",
+"build": "webpack --config ./webpack.config.js --progress --colors",
 "start": "webpack-dev-server --open"
 ```
 

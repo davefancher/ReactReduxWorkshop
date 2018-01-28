@@ -142,7 +142,7 @@ These packages provide all of React's core functionality and the entry point for
 Although it's possible to write a React application with "vanilla" JavaScript it's far more convenient (and productive!) to use React's JSX extension which allows us to specify components with a markdown-like syntax. In order to achieve this we'll need a transpiler that knows how to convert JSX to JavaScript. That's where Babel comes in.
 
 ```bash
-npm install babel-core babel-loader babel-preset-env babel-preset-es2015 babel-preset-react babel-preset-stage-2 css-loader  --save
+npm install babel-core babel-loader babel-preset-env babel-preset-react --save
 ```
 
 Here we've installed several packages that include the core Babel functionality along with some extensions to handle ES6 and JSX.
@@ -2197,7 +2197,7 @@ We finally have everything in place to asynchronously dispatch and handle Redux 
 
 ## Module 10: Higher-Order Components
 
-In our example App, we have a LoginForm component that either returns a form to allow the user to login:
+In our example app, we have a `LoginForm` component that either returns a form to allow the user to login:
 
 ```js
 <div className="form-inline">

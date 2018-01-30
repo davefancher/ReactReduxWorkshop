@@ -237,7 +237,7 @@ The above snippet defines a very simple functional component called `HelloWorld`
 
 Of particular importance here is how this appears to be a blend of JavaScript and HTML. This is JSX - a declarative extension to JavaScript that lets us write logic in JavaScript while expressing the resulting element(s) in their natural form.
 
-It's important to note, however, that the `HelloWorld` fuction does not return HTML but instead returns a specialized React object; the JSX syntax is syntactic sugar over much more verbose JavaScript function calls.
+It's important to note, however, that the `HelloWorld` function does not return HTML but instead returns a specialized React object; the JSX syntax is syntactic sugar over much more verbose JavaScript function calls.
 
 *Since you'll almost never use the long-form we won't cover it here.*
 

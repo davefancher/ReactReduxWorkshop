@@ -229,7 +229,7 @@ In keeping with software development tradition let's begin our introduction to R
 function HelloWorld () {
     return (
         <div>Hello world!</div>
-    )
+    );
 }
 ```
 
